@@ -25,6 +25,7 @@ author:
 permalink: "/contact-us/"
 ---
 <p><img class="size-medium wp-image-386 alignleft" src="{{ site.baseurl }}/assets/img/SSE057-300x235.jpg" alt="" width="300" height="235" /></p>
+
 <p>Hi,</p>
 <p>My name is Sam if you haven't already guessed that.</p>
 <p>This blog aims to combine functional programming with mobile apps. Mobile apps are hard, and with the slow turn around in the store (A mobile app can't be released to production 40 times a day), it's important to get them right the first time. Functional programming helps with this.</p>
