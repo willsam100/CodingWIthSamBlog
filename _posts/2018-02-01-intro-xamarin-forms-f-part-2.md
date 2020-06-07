@@ -32,8 +32,8 @@ author:
   last_name: Williams
 permalink: "/2018/02/01/intro-xamarin-forms-f-part-2/"
 ---
-<p>This video is the second in the introduction series of Xamarin Forms with F#.</p>
-<p>In this video I focus on handling the exception that occurs when the user enters text.</p>
-<p>This is very similar to my previous post: <a href="//www.codingwithsam.com/net-none-none-none-or-exceptions/">How to turn runtime exceptions into compiler errors</a></p>
-<p><iframe width="560" height="315" src="https://www.youtube.com/embed/W1Rymk1ugIw" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></p>
-<p>If you enjoy the video, and want more, don't forget to like the video or even better leave a comment.</p>
+This video is the second in the introduction series of Xamarin Forms with F#.
+In this video I focus on handling the exception that occurs when the user enters text.
+This is very similar to my previous post: [How to turn runtime exceptions into compiler errors]({{ "/2016/12/03/net-none-none-none-or-exceptions/" | relative_url }})
+<iframe width="560" height="315" src="https://www.youtube.com/embed/W1Rymk1ugIw" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+If you enjoy the video, and want more, don't forget to like the video or even better leave a comment.

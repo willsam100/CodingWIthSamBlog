@@ -33,53 +33,71 @@ author:
   last_name: Williams
 permalink: "/2019/03/11/xamarin-forms-push-notifications-a-worked-example-with-fcm-on-android/"
 ---
-<p>Google's new firebase cloud messaging is a great way to send messages to your users or devices. Best of all, it is a great way to get a little bit of extra background processing time on Android 8+. Xamarin has bindings for Android and iOS to make all of this really simple.</p>
-<p>I had to set this up recently, so here are the steps that I had to take to get it going. So you can follow along. I'll build a demo app call <code>pushy</code>, a worked example. FCM supports iOS, but this post focuses on Android (I think we all know that iOS will 'just work').</p>
-<h2>Overview</h2>
-<p>This guide will focus on Android with Xamarin Forms, which is similar to their Java/Kotlin guide.</p>
-<p>There are 3 simple steps to setting up FCM (Firebase Cloud Messaging)<br />
-- Google Console: creating project and keys to add into the device<br />
-- Add libs in the app and subscribing<br />
-- Setting up the backend to store device tokens and sending messages to devices</p>
-<p>This post follows that order:<br />
-- Console setup<br />
-- Nugets + Google Play Services<br />
-- App code<br />
-- App testing<br />
-- Better app code<br />
-- Backend code<br />
-- Handling background/foreground<br />
-- Android challenges with Push<br />
-- GCM migration</p>
-<h2>The app - Pushy</h2>
-<p>The app we will be building is very very simple but will highlight most of the challenges with Push Notifications. The app will receive a push notification, sent from the server to a specific device. If the app is in the foreground it will show the message on the UI. If the app is not in the foreground, it will show a notification.</p>
-<h2>Google Console</h2>
-<p>For Xamarin, this step is exactly the same as Google describes it.</p>
-<p>Adding a project is really straight forward. Simply go to <a href="https://firebase.google.com/">Firebase Console</a>, signup and create a new account.</p>
-<p>Then select create a new project, and give it a meaningful name:<br />
-<img src="{{ site.baseurl }}/assets/img/FirebaseAddProject.png" alt="Smiley face"  /></p>
-<p>See the end of this post for details on migrating from GCM</p>
-<p>Add an Android app (Firebase should provide a prompt to add an app after creating the project).</p>
-<p>Navigate to settings:<br />
-<img src="{{ site.baseurl }}/assets/img/FirebaseProjectSettings.png" alt="Smiley face"  /></p>
-<p>From there simply add your app name and download the <code>google-servics.json</code> file. If you missed this step on sign-up, go to settings, and then scroll down. If you did add your app you can download the file, or you can add an app, and then download the file.</p>
-<p><img src="{{ site.baseurl }}/assets/img/FirebaseGoogleServicesJson.png" alt="Smiley face" height="700" width="700" /></p>
-<h2>Adding FCM to the app</h2>
-<p>In Visual Studio, File -&gt; New Project. I'll be using the name <code>pushy</code> (I'll also be using F#), It's a standard Xamarin.Forms app.</p>
-<p>In the Android project, make sure you are targeting Android 8 or higher. If not, first update it via the project settings. If you have an existing app, then NO it is not safe to just to update (as some guides state). Changing the Android target is beyond the scope of this post but in short, you must check that you are not using any old APIs that have been removed. If your app does, you will need to change it. The biggest are runtime permissions, background modes and implicit intents (you can't subscribe to power connected).</p>
-<h4>Add the files and Nuget packages</h4>
-<p>Add these two NuGet packages to your Android project:<br />
-- Xamarin.GooglePlayServices.Base<br />
-- Xamarin.Firebase.Messaging</p>
-<p>Add <code>google-servics.json</code> as a file to the Android project (this file can be downloaded from the firebase console again if you deleted it).</p>
-<p><strong>Reload the solution</strong> if you are using VS4Mac, as the IDE does not provide the correct option.<br />
-Once that is done, set the correct Build Action:<br />
-<img src="{{ site.baseurl }}/assets/img/GoogleServiceFileBuildAction.png" alt="Smiley face" height="700" width="700" /></p>
-<h4>Check Google play services if you must</h4>
-<p>For production, this step must be followed, but a simple test maybe not.</p>
-<p>For the Android code snippet, you can see <a href="https://docs.microsoft.com/en-us/xamarin/android/data-cloud/google-messaging/remote-notifications-with-fcm?tabs=macos">Xamarin's post on this</a></p>
-<p>I wanted this to work with Xamarin.Forms and I also prefer to use F#.</p>
-<p>In the core project, above <code>MainPage</code> class, I have declared the following. It captures all the possible states for Google Play Services (similar to an enum), but can also hold data too (ie when user input is required in this case).</p>
+Google's new firebase cloud messaging is a great way to send messages to your users or devices. Best of all, it is a great way to get a little bit of extra background processing time on Android 8+. Xamarin has bindings for Android and iOS to make all of this really simple.
+
+I had to set this up recently, so here are the steps that I had to take to get it going. So you can follow along. I'll build a demo app call <code>pushy</code>, a worked example. FCM supports iOS, but this post focuses on Android (I think we all know that iOS will 'just work').
+
+## Overview
+This guide will focus on Android with Xamarin Forms, which is similar to their Java/Kotlin guide.
+There are 3 simple steps to setting up FCM (Firebase Cloud Messaging)
+
+- Google Console: creating project and keys to add into the device
+- Add libs in the app and subscribing
+- Setting up the backend to store device tokens and sending messages to devices
+This post follows that order:
+
+- Console setup
+- Nugets + Google Play Services
+- App code
+- App testing
+- Better app code
+- Backend code
+- Handling background/foreground
+- Android challenges with Push
+- GCM migration
+
+## The app - Pushy
+The app we will be building is very very simple but will highlight most of the challenges with Push Notifications. The app will receive a push notification, sent from the server to a specific device. If the app is in the foreground it will show the message on the UI. If the app is not in the foreground, it will show a notification.
+
+## Google Console
+For Xamarin, this step is exactly the same as Google describes it.
+Adding a project is really straight forward. Simply go to <a href="https://firebase.google.com/">Firebase Console</a>, signup and create a new account.
+Then select create a new project, and give it a meaningful name:
+
+<img src="{{ site.baseurl }}/assets/img/FirebaseAddProject.png" alt="Smiley face"  />
+See the end of this post for details on migrating from GCM
+Add an Android app (Firebase should provide a prompt to add an app after creating the project).
+Navigate to settings:
+
+<img src="{{ site.baseurl }}/assets/img/FirebaseProjectSettings.png" alt="Smiley face"  />
+From there simply add your app name and download the <code>google-servics.json</code> file. If you missed this step on sign-up, go to settings, and then scroll down. If you did add your app you can download the file, or you can add an app, and then download the file.
+<img src="{{ site.baseurl }}/assets/img/FirebaseGoogleServicesJson.png" alt="Smiley face" height="700" width="700" />
+
+## Adding FCM to the app
+In Visual Studio, File -> New Project. I'll be using the name <code>pushy</code> (I'll also be using F#), It's a standard Xamarin.Forms app.
+
+In the Android project, make sure you are targeting Android 8 or higher. If not, first update it via the project settings. If you have an existing app, then NO it is not safe to just to update (as some guides state). Changing the Android target is beyond the scope of this post but in short, you must check that you are not using any old APIs that have been removed. If your app does, you will need to change it. The biggest are runtime permissions, background modes and implicit intents (you can't subscribe to power connected).
+
+### Add the files and Nuget packages
+Add these two NuGet packages to your Android project:
+
+- Xamarin.GooglePlayServices.Base
+- Xamarin.Firebase.Messaging
+
+Add <code>google-servics.json</code> as a file to the Android project (this file can be downloaded from the firebase console again if you deleted it).
+**Reload the solution** if you are using VS4Mac, as the IDE does not provide the correct option.
+
+Once that is done, set the correct Build Action:
+
+<img src="{{ site.baseurl }}/assets/img/GoogleServiceFileBuildAction.png" alt="Smiley face" height="700" width="700" />
+
+### Check Google play services if you must
+For production, this step must be followed, but a simple test maybe not.
+For the Android code snippet, you can see <a href="https://docs.microsoft.com/en-us/xamarin/android/data-cloud/google-messaging/remote-notifications-with-fcm?tabs=macos">Xamarin's post on this</a>
+
+I wanted this to work with Xamarin.Forms and I also prefer to use F#.
+
+In the core project, above <code>MainPage</code> class, I have declared the following. It captures all the possible states for Google Play Services (similar to an enum), but can also hold data too (ie when user input is required in this case).
 <table class="pre">
 <tbody>
 <tr>
@@ -100,7 +118,7 @@ Once that is done, set the correct Build Action:<br />
 </tr>
 </tbody>
 </table>
-<p>The following code is in the <code>MainActivity</code> as a private method. Here we check Google Play Services and return one of the values from <code>GooglePlayServicesAvailable</code> type</p>
+The following code is in the <code>MainActivity</code> as a private method. Here we check Google Play Services and return one of the values from <code>GooglePlayServicesAvailable</code> type
 <table class="pre">
 <tbody>
 <tr>
@@ -126,14 +144,14 @@ Once that is done, set the correct Build Action:<br />
         <span onmouseout="hideTip(event, 'fs2', 9)" onmouseover="showTip(event, 'fs2', 9)" class="uc">HasGooglePlayServices</span>
     <span class="k">else</span> 
         <span class="k">if</span> <span class="id">GoogleApiAvailability</span><span class="pn">.</span><span class="id">Instance</span><span class="pn">.</span><span class="id">IsUserResolvableError</span> <span onmouseout="hideTip(event, 'fs7', 10)" onmouseover="showTip(event, 'fs7', 10)" class="id">resultCode</span> <span class="k">then</span>
-            <span class="id">GoogleApiAvailability</span><span class="pn">.</span><span class="id">Instance</span><span class="pn">.</span><span class="id">GetErrorString</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs7', 11)" onmouseover="showTip(event, 'fs7', 11)" class="id">resultCode</span><span class="pn">)</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs3', 12)" onmouseover="showTip(event, 'fs3', 12)" class="uc">RequiresUser</span>
+            <span class="id">GoogleApiAvailability</span><span class="pn">.</span><span class="id">Instance</span><span class="pn">.</span><span class="id">GetErrorString</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs7', 11)" onmouseover="showTip(event, 'fs7', 11)" class="id">resultCode</span><span class="pn">)</span> <span class="o">|></span> <span onmouseout="hideTip(event, 'fs3', 12)" onmouseover="showTip(event, 'fs3', 12)" class="uc">RequiresUser</span>
         <span class="k">else</span> <span onmouseout="hideTip(event, 'fs5', 13)" onmouseover="showTip(event, 'fs5', 13)" class="uc">NoGooglePlayServices</span>
 </code></pre>
 </td>
 </tr>
 </tbody>
 </table>
-<p>Now I can pass this directly into my forms app to be used from the application.</p>
+Now I can pass this directly into my forms app to be used from the application.
 <table class="pre">
 <tbody>
 <tr>
@@ -172,15 +190,15 @@ Once that is done, set the correct Build Action:<br />
 <span class="c">// MainPage showing usage</span>
 <span class="k">type</span> <span class="id">MainPage</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs6', 16)" onmouseover="showTip(event, 'fs6', 16)" class="id">isPlayServicesAvailable</span><span class="pn">)</span> <span class="o">=</span>
 <span class="k">inherit</span> <span class="id">ContentPage</span><span class="pn">(</span><span class="pn">)</span>
-<span class="k">let</span> <span class="id">_</span> <span class="o">=</span> <span class="k">base</span><span class="pn">.</span><span class="id">LoadFromXaml</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs8', 17)" onmouseover="showTip(event, 'fs8', 17)" class="id">typeof</span><span class="pn">&lt;</span><span class="id">MainPage</span><span class="pn">&gt;</span><span class="pn">)</span>
-<span class="k">let</span> <span class="id">label</span> <span class="o">=</span> <span class="k">base</span><span class="pn">.</span><span class="id">FindByName</span><span class="pn">&lt;</span><span class="id">Label</span><span class="pn">&gt;</span><span class="pn">(</span><span class="s">"Label"</span><span class="pn">)</span>
+<span class="k">let</span> <span class="id">_</span> <span class="o">=</span> <span class="k">base</span><span class="pn">.</span><span class="id">LoadFromXaml</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs8', 17)" onmouseover="showTip(event, 'fs8', 17)" class="id">typeof</span><span class="pn">&lt;</span><span class="id">MainPage</span><span class="pn">></span><span class="pn">)</span>
+<span class="k">let</span> <span class="id">label</span> <span class="o">=</span> <span class="k">base</span><span class="pn">.</span><span class="id">FindByName</span><span class="pn">&lt;</span><span class="id">Label</span><span class="pn">></span><span class="pn">(</span><span class="s">"Label"</span><span class="pn">)</span>
 
 <span class="k">do</span> 
     <span class="k">let</span> <span class="id">message</span> <span class="o">=</span> 
         <span class="k">match</span> <span onmouseout="hideTip(event, 'fs6', 18)" onmouseover="showTip(event, 'fs6', 18)" class="id">isPlayServicesAvailable</span> <span class="pn">(</span><span class="pn">)</span> <span class="k">with</span> 
-        <span class="pn">|</span> <span onmouseout="hideTip(event, 'fs2', 19)" onmouseover="showTip(event, 'fs2', 19)" class="id">HasGooglePlayServices</span> <span class="k">-&gt;</span> <span class="s">"Pushy is ready for push"</span>
-        <span class="pn">|</span> <span onmouseout="hideTip(event, 'fs5', 20)" onmouseover="showTip(event, 'fs5', 20)" class="id">NoGooglePlayServices</span> <span class="k">-&gt;</span> <span class="s">"Pushy is not supported on this device"</span>
-        <span class="pn">|</span> <span onmouseout="hideTip(event, 'fs3', 21)" onmouseover="showTip(event, 'fs3', 21)" class="id">RequiresUser</span> <span class="id">x</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs9', 22)" onmouseover="showTip(event, 'fs9', 22)" class="id">sprintf</span> <span class="s">"Pushy needs your help: %s"</span> <span class="id">x</span>
+        <span class="pn">|</span> <span onmouseout="hideTip(event, 'fs2', 19)" onmouseover="showTip(event, 'fs2', 19)" class="id">HasGooglePlayServices</span> <span class="k">-></span> <span class="s">"Pushy is ready for push"</span>
+        <span class="pn">|</span> <span onmouseout="hideTip(event, 'fs5', 20)" onmouseover="showTip(event, 'fs5', 20)" class="id">NoGooglePlayServices</span> <span class="k">-></span> <span class="s">"Pushy is not supported on this device"</span>
+        <span class="pn">|</span> <span onmouseout="hideTip(event, 'fs3', 21)" onmouseover="showTip(event, 'fs3', 21)" class="id">RequiresUser</span> <span class="id">x</span> <span class="k">-></span> <span onmouseout="hideTip(event, 'fs9', 22)" onmouseover="showTip(event, 'fs9', 22)" class="id">sprintf</span> <span class="s">"Pushy needs your help: %s"</span> <span class="id">x</span>
 
     <span class="id">label</span><span class="pn">.</span><span class="id">Text</span> <span class="k">&lt;-</span> <span class="id">message</span> 
 </code></pre>
@@ -188,9 +206,10 @@ Once that is done, set the correct Build Action:<br />
 </tr>
 </tbody>
 </table>
-<p>Alternatively, I could wire this function up to Xamarin Forms' Dependency Service.</p>
-<h4>Register the app with Google.</h4>
-<p>This was much harder when using GCM, now it is pretty easy. In the application, manifest add the following. No need to change anything:</p>
+Alternatively, I could wire this function up to Xamarin Forms' Dependency Service.
+
+### Register the app with Google.
+This was much harder when using GCM, now it is pretty easy. In the application, manifest add the following. No need to change anything:
 <table class="pre">
 <tbody>
 <tr>
@@ -213,24 +232,24 @@ Once that is done, set the correct Build Action:<br />
 <td class="snippet">
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="pn">&lt;</span><span class="id">receiver</span>
     <span class="id">android</span><span class="pn">:</span><span class="id">name</span><span class="o">=</span><span class="s">"com.google.firebase.iid.FirebaseInstanceIdInternalReceiver"</span>
-    <span class="id">android</span><span class="pn">:</span><span class="id">exported</span><span class="o">=</span><span class="s">"false"</span> <span class="o">/&gt;</span>
+    <span class="id">android</span><span class="pn">:</span><span class="id">exported</span><span class="o">=</span><span class="s">"false"</span> <span class="o">/></span>
 <span class="pn">&lt;</span><span class="id">receiver</span>
     <span class="id">android</span><span class="pn">:</span><span class="id">name</span><span class="o">=</span><span class="s">"com.google.firebase.iid.FirebaseInstanceIdReceiver"</span>
     <span class="id">android</span><span class="pn">:</span><span class="id">exported</span><span class="o">=</span><span class="s">"true"</span>
-    <span class="id">android</span><span class="pn">:</span><span class="id">permission</span><span class="o">=</span><span class="s">"com.google.android.c2dm.permission.SEND"</span><span class="pn">&gt;</span>
-    <span class="pn">&lt;</span><span class="id">intent</span><span class="o">-</span><span class="id">filter</span><span class="pn">&gt;</span>
-        <span class="pn">&lt;</span><span class="id">action</span> <span class="id">android</span><span class="pn">:</span><span class="id">name</span><span class="o">=</span><span class="s">"com.google.android.c2dm.intent.RECEIVE"</span> <span class="o">/&gt;</span>
-        <span class="pn">&lt;</span><span class="id">action</span> <span class="id">android</span><span class="pn">:</span><span class="id">name</span><span class="o">=</span><span class="s">"com.google.android.c2dm.intent.REGISTRATION"</span> <span class="o">/&gt;</span>
-        <span class="pn">&lt;</span><span class="id">category</span> <span class="id">android</span><span class="pn">:</span><span class="id">name</span><span class="o">=</span><span class="s">"${applicationId}"</span> <span class="o">/&gt;</span>
-    <span class="o">&lt;/</span><span class="id">intent</span><span class="o">-</span><span class="id">filter</span><span class="pn">&gt;</span>
-<span class="o">&lt;/</span><span class="id">receiver</span><span class="pn">&gt;</span>
+    <span class="id">android</span><span class="pn">:</span><span class="id">permission</span><span class="o">=</span><span class="s">"com.google.android.c2dm.permission.SEND"</span><span class="pn">></span>
+    <span class="pn">&lt;</span><span class="id">intent</span><span class="o">-</span><span class="id">filter</span><span class="pn">></span>
+        <span class="pn">&lt;</span><span class="id">action</span> <span class="id">android</span><span class="pn">:</span><span class="id">name</span><span class="o">=</span><span class="s">"com.google.android.c2dm.intent.RECEIVE"</span> <span class="o">/></span>
+        <span class="pn">&lt;</span><span class="id">action</span> <span class="id">android</span><span class="pn">:</span><span class="id">name</span><span class="o">=</span><span class="s">"com.google.android.c2dm.intent.REGISTRATION"</span> <span class="o">/></span>
+        <span class="pn">&lt;</span><span class="id">category</span> <span class="id">android</span><span class="pn">:</span><span class="id">name</span><span class="o">=</span><span class="s">"${applicationId}"</span> <span class="o">/></span>
+    <span class="o">&lt;/</span><span class="id">intent</span><span class="o">-</span><span class="id">filter</span><span class="pn">></span>
+<span class="o">&lt;/</span><span class="id">receiver</span><span class="pn">></span>
 </code></pre>
 </td>
 </tr>
 </tbody>
 </table>
-<blockquote><p>Note: Because we are using Xamairn, updating the Application Manifest is required. Google's docs for Java app state that this can be removed.</p></blockquote>
-<p>Finally, we add the service to call the Google Nuget library. I have put this above MainActivity</p>
+<blockquote>Note: Because we are using Xamairn, updating the Application Manifest is required. Google's docs for Java app state that this can be removed.</blockquote>
+Finally, we add the service to call the Google Nuget library. I have put this above MainActivity
 <table class="pre">
 <tbody>
 <tr>
@@ -251,7 +270,7 @@ Once that is done, set the correct Build Action:<br />
 </pre>
 </td>
 <td class="snippet">
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="pn">[&lt;</span><span class="id">Service</span><span class="pn">;</span> <span class="id">IntentFilter</span><span class="pn">(</span><span class="pn">[|</span> <span class="s">"com.google.firebase.INSTANCE_ID_EVENT"</span> <span class="pn">|]</span><span class="pn">)</span><span class="pn">&gt;]</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="pn">[&lt;</span><span class="id">Service</span><span class="pn">;</span> <span class="id">IntentFilter</span><span class="pn">(</span><span class="pn">[|</span> <span class="s">"com.google.firebase.INSTANCE_ID_EVENT"</span> <span class="pn">|]</span><span class="pn">)</span><span class="pn">>]</span>
 <span class="k">type</span> <span class="id">MyFirebaseIIDService</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span>
     <span class="k">inherit</span> <span class="id">FirebaseInstanceIdService</span><span class="pn">(</span><span class="pn">)</span>
 
@@ -262,16 +281,16 @@ Once that is done, set the correct Build Action:<br />
     <span class="k">override</span> <span class="id">this</span><span class="pn">.</span><span class="id">OnTokenRefresh</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> 
     
         <span class="k">let</span> <span class="id">refreshedToken</span> <span class="o">=</span> <span class="id">FirebaseInstanceId</span><span class="pn">.</span><span class="id">Instance</span><span class="pn">.</span><span class="id">Token</span><span class="pn">;</span>
-        <span class="s">"Refreshed token: "</span> <span class="o">+</span> <span class="id">refreshedToken</span> <span class="o">|&gt;</span> <span class="id">Debug</span><span class="pn">.</span><span class="id">WriteLine</span>
+        <span class="s">"Refreshed token: "</span> <span class="o">+</span> <span class="id">refreshedToken</span> <span class="o">|></span> <span class="id">Debug</span><span class="pn">.</span><span class="id">WriteLine</span>
         <span class="id">sendRegistrationToServer</span> <span class="id">refreshedToken</span>
 </code></pre>
 </td>
 </tr>
 </tbody>
 </table>
-<p>You will need to implement the step for sending the token to your backend server. Without the token, you won't be able to send messages to a single device.</p>
-<p>In order to test this out, it can be a good idea to log the device token, so that we can pass that to the server.</p>
-<p>Add the following to <code>OnCreate</code> in <code>MainActivity</code>:</p>
+You will need to implement the step for sending the token to your backend server. Without the token, you won't be able to send messages to a single device.
+In order to test this out, it can be a good idea to log the device token, so that we can pass that to the server.
+Add the following to <code>OnCreate</code> in <code>MainActivity</code>:
 <table class="pre">
 <tbody>
 <tr>
@@ -280,22 +299,26 @@ Once that is done, set the correct Build Action:<br />
 </pre>
 </td>
 <td class="snippet">
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="s">"InstanceID token: "</span> <span class="o">+</span> <span class="id">FirebaseInstanceId</span><span class="pn">.</span><span class="id">Instance</span><span class="pn">.</span><span class="id">Token</span> <span class="o">|&gt;</span> <span class="id">Debug</span><span class="pn">.</span><span class="id">WriteLine</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="s">"InstanceID token: "</span> <span class="o">+</span> <span class="id">FirebaseInstanceId</span><span class="pn">.</span><span class="id">Instance</span><span class="pn">.</span><span class="id">Token</span> <span class="o">|></span> <span class="id">Debug</span><span class="pn">.</span><span class="id">WriteLine</span>
 </code></pre>
 </td>
 </tr>
 </tbody>
 </table>
-<p>Build and run the app. Check the logs for the InstanceID token, we'll use it later on.</p>
-<h5>If you just want to see a notification</h5>
-<p>Run the app on your device, and you can use firebase console to a message to your device. It will show up as a notification. This is fine for testing, not useful for production.</p>
-<p>Login into the firebase console, select your project. On the left menu select 'Cloud Messaging'. From there you can navigate</p>
-<p><img src="{{ site.baseurl }}/assets/img/fcm-cloud-messaging.png" alt="Smiley face" /></p>
-<p>In production, this method is not useful, as it always a notification, and it is not reliable if the phone is in the background. There is some evidence to suggest this method only works if the app is in the foreground. This is because firebase sends these messages as 'notification' messages.</p>
-<p>Let's fix our app to handle all types of messages.</p>
-<h5>Handling incoming messages</h5>
-<p>It turns out that for Android, things are never straight forward. The code so far does not work in all scenarios, or all devices.</p>
-<p>We need to add a message handler, to intercept messages. I have added the following code above <code>MainActivity</code> in the Android project:</p>
+Build and run the app. Check the logs for the InstanceID token, we'll use it later on.
+
+#### If you just want to see a notification
+Run the app on your device, and you can use firebase console to a message to your device. It will show up as a notification. This is fine for testing, not useful for production.
+
+Login into the firebase console, select your project. On the left menu select 'Cloud Messaging'. From there you can navigate
+<img src="{{ site.baseurl }}/assets/img/fcm-cloud-messaging.png" alt="Smiley face" />
+
+In production, this method is not useful, as it always a notification, and it is not reliable if the phone is in the background. There is some evidence to suggest this method only works if the app is in the foreground. This is because firebase sends these messages as 'notification' messages.
+Let's fix our app to handle all types of messages.
+
+#### Handling incoming messages
+It turns out that for Android, things are never straight forward. The code so far does not work in all scenarios, or all devices.
+We need to add a message handler, to intercept messages. I have added the following code above <code>MainActivity</code> in the Android project:
 <table class="pre">
 <tbody>
 <tr>
@@ -314,26 +337,28 @@ Once that is done, set the correct Build Action:<br />
 </pre>
 </td>
 <td class="snippet">
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="pn">[&lt;</span><span class="id">Service</span><span class="pn">;</span> <span class="id">IntentFilter</span><span class="pn">(</span><span class="pn">[|</span> <span class="s">"com.google.firebase.MESSAGING_EVENT"</span> <span class="pn">|]</span><span class="pn">)</span><span class="pn">&gt;]</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="pn">[&lt;</span><span class="id">Service</span><span class="pn">;</span> <span class="id">IntentFilter</span><span class="pn">(</span><span class="pn">[|</span> <span class="s">"com.google.firebase.MESSAGING_EVENT"</span> <span class="pn">|]</span><span class="pn">)</span><span class="pn">>]</span>
 <span class="k">type</span>  <span class="id">MyFcmListenerService</span><span class="pn">(</span><span class="pn">)</span> <span class="k">as</span> <span class="id">this</span> <span class="o">=</span>
     <span class="k">inherit</span> <span class="id">FirebaseMessagingService</span><span class="pn">(</span><span class="pn">)</span>
 
     <span class="c">// Helper to convert the F# map type</span>
-    <span class="k">let</span> <span class="id">dictToMap</span> <span class="pn">(</span><span class="id">dic</span> <span class="pn">:</span> <span onmouseout="hideTip(event, 'fs10', 23)" onmouseover="showTip(event, 'fs10', 23)" class="id">System</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs11', 24)" onmouseover="showTip(event, 'fs11', 24)" class="id">Collections</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs12', 25)" onmouseover="showTip(event, 'fs12', 25)" class="id">Generic</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs13', 26)" onmouseover="showTip(event, 'fs13', 26)" class="id">IDictionary</span><span class="pn">&lt;</span><span class="id">_</span><span class="pn">,</span><span class="id">_</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> <span class="id">dic</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs14', 27)" onmouseover="showTip(event, 'fs14', 27)" class="id">Seq</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs15', 28)" onmouseover="showTip(event, 'fs15', 28)" class="id">map</span> <span class="pn">(</span><span class="pn">|</span><span onmouseout="hideTip(event, 'fs16', 29)" onmouseover="showTip(event, 'fs16', 29)" class="id">KeyValue</span><span class="pn">|</span><span class="pn">)</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs17', 30)" onmouseover="showTip(event, 'fs17', 30)" class="id">Map</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs18', 31)" onmouseover="showTip(event, 'fs18', 31)" class="id">ofSeq</span>
+    <span class="k">let</span> <span class="id">dictToMap</span> <span class="pn">(</span><span class="id">dic</span> <span class="pn">:</span> <span onmouseout="hideTip(event, 'fs10', 23)" onmouseover="showTip(event, 'fs10', 23)" class="id">System</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs11', 24)" onmouseover="showTip(event, 'fs11', 24)" class="id">Collections</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs12', 25)" onmouseover="showTip(event, 'fs12', 25)" class="id">Generic</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs13', 26)" onmouseover="showTip(event, 'fs13', 26)" class="id">IDictionary</span><span class="pn">&lt;</span><span class="id">_</span><span class="pn">,</span><span class="id">_</span><span class="pn">></span><span class="pn">)</span> <span class="o">=</span> <span class="id">dic</span> <span class="o">|></span> <span onmouseout="hideTip(event, 'fs14', 27)" onmouseover="showTip(event, 'fs14', 27)" class="id">Seq</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs15', 28)" onmouseover="showTip(event, 'fs15', 28)" class="id">map</span> <span class="pn">(</span><span class="pn">|</span><span onmouseout="hideTip(event, 'fs16', 29)" onmouseover="showTip(event, 'fs16', 29)" class="id">KeyValue</span><span class="pn">|</span><span class="pn">)</span> <span class="o">|></span> <span onmouseout="hideTip(event, 'fs17', 30)" onmouseover="showTip(event, 'fs17', 30)" class="id">Map</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs18', 31)" onmouseover="showTip(event, 'fs18', 31)" class="id">ofSeq</span>
 
     <span class="k">override</span> <span class="id">this</span><span class="pn">.</span><span class="id">OnMessageReceived</span><span class="pn">(</span><span class="id">message</span><span class="pn">:</span> <span class="id">RemoteMessage</span><span class="pn">)</span> <span class="o">=</span> 
     
         <span class="c">// Log the items</span>
-        <span class="id">data</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs17', 32)" onmouseover="showTip(event, 'fs17', 32)" class="id">Map</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs19', 33)" onmouseover="showTip(event, 'fs19', 33)" class="id">iter</span> <span class="pn">(</span><span class="k">fun</span> <span class="id">key</span> <span class="id">value</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs9', 34)" onmouseover="showTip(event, 'fs9', 34)" class="id">sprintf</span> <span class="s">"%s:%s"</span> <span class="id">key</span> <span class="id">value</span> <span class="o">|&gt;</span> <span class="id">Debug</span><span class="pn">.</span><span class="id">WriteLine</span> <span class="pn">)</span>
+        <span class="id">data</span> <span class="o">|></span> <span onmouseout="hideTip(event, 'fs17', 32)" onmouseover="showTip(event, 'fs17', 32)" class="id">Map</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs19', 33)" onmouseover="showTip(event, 'fs19', 33)" class="id">iter</span> <span class="pn">(</span><span class="k">fun</span> <span class="id">key</span> <span class="id">value</span> <span class="k">-></span> <span onmouseout="hideTip(event, 'fs9', 34)" onmouseover="showTip(event, 'fs9', 34)" class="id">sprintf</span> <span class="s">"%s:%s"</span> <span class="id">key</span> <span class="id">value</span> <span class="o">|></span> <span class="id">Debug</span><span class="pn">.</span><span class="id">WriteLine</span> <span class="pn">)</span>
 </code></pre>
 </td>
 </tr>
 </tbody>
 </table>
-<p>Whenever a message (more on sending the right message later) to the device, <code>OnMessageReceived</code> will be called. Our implementation is very simple, but good enough to tell us that things are working when connected to a debugger (reading the logs).</p>
-<h4>Improving the testing method!</h4>
-<p>To test this setup now, we can't use the web console. Instead, we will send messages directly to the device. The simplest way of doing this is via curl on the command line.</p>
-<p>Here is a sample curl request. You will need to update it with your API key (find this in the firebase console), and your device token (leave off the device token if you want to send to everyone):</p>
+Whenever a message (more on sending the right message later) to the device, <code>OnMessageReceived</code> will be called. Our implementation is very simple, but good enough to tell us that things are working when connected to a debugger (reading the logs).
+
+### Improving the testing method!
+To test this setup now, we can't use the web console. Instead, we will send messages directly to the device. The simplest way of doing this is via curl on the command line.
+
+Here is a sample curl request. You will need to update it with your API key (find this in the firebase console), and your device token (leave off the device token if you want to send to everyone):
 <table class="pre">
 <tbody>
 <tr>
@@ -370,32 +395,43 @@ Once that is done, set the correct Build Action:<br />
 </tr>
 </tbody>
 </table>
-<p>Make sure your app is either running in the background, or in the foreground. It's best to be connected to the debugger. Send the curl request, and in the logs, you should see the <code>title</code> and <code>body</code> printed out.</p>
-<p>If you have trouble receiving messages see the below for the troubleshooting section.</p>
-<p>More on this whole background/foreground thing later!</p>
-<p>We're done, at least for now on the app. On to refining the backend (and seeing in detail what we did with that curl request).</p>
-<h2>The backend</h2>
-<p>As already stated, in order to send messages to a single device, the instanceID token is needed. For this the backend is really made up of two parts:<br />
-- receiving and storing the InstanceID Token<br />
-- sending a message to the device</p>
-<h4>Receiving and storing the InstanceID token</h4>
-<p>I won't go into too much detail on the first point; it's really just building a REST API that accepts the value. A couple of key requirements are to make sure to <em>link the InstanceID token with a device identifier, and preferably the user</em>. This provides the link, so that at the application level on the server/app we can send a message to a user or device, lookup the InstanceID token, and then fire off the message via FCM.</p>
-<h2>Sending messages to the device</h2>
-<p>Onto the second part, sending a message to the device. Google's documentation on this is at first a little misleading. There are two APIs and they are both valid, though one is label <code>legacy</code> (I thought we had semver for this).</p>
-<p>If you have an existing GCM system, the only thing you need to do is change the base URL, from <code>gcm-http.googleapis.com/gcm/</code> to <code>fcm.googleapis.com/fcm/</code>. The rest of the API will still work. As Google states in their documentation, they are not removing them yet.</p>
-<blockquote><p>"The FCM equivalent of the GCM HTTP protocol is labelled "legacy" only to distinguish it clearly from the HTTP v1 API. The API is fully supported and Google has no near-term plan to deprecate it." Google - <a href="https://developers.google.com/cloud-messaging/android/android-migrate-fcm#update-server-endpoints">https://developers.google.com/cloud-messaging/android/android-migrate-fcm#update-server-endpoints</a></p></blockquote>
-<p>When we send the curl request, we used the legacy API, with the newly updated endpoint. According to Google's docs, everything is fine with this approach, nothing is going to be turned off.</p>
-<h4>What's with legacy, should I upgrade?</h4>
-<p>The new API is titled 'FCM HTTP v1 API' (again it's called v1, but it's really the second version the legacy one was the first), and has two main benefits:<br />
-- Security is a little better (short-lived OAuth 2.0 tokens)<br />
-- Custom messages per platform (ie iOS vs Android)</p>
-<p>The security tokens are nice, but not essential. For the platform messages, well, we're using Xamarin Forms so from a high level the business logic should be same, ie you probably don't need specific messages.</p>
-<h4>If targeting the new API</h4>
-<p>Their main guide is here: <a href="https://firebase.google.com/docs/cloud-messaging/migrate-v1">https://firebase.google.com/docs/cloud-messaging/migrate-v1</a> it's simple if you're using Java.<br />
-If you're using .NET, the library and setup details are here: <a href="https://firebase.google.com/docs/admin/setup">https://firebase.google.com/docs/admin/setup</a></p>
-<h4>Sending messages with the 'Legacy' API</h4>
-<p>Full docs are <a href="https://firebase.google.com/docs/cloud-messaging/http-server-ref">here</a>,but that's rather verbose and abstract.</p>
-<p>Here is the curl example again:</p>
+Make sure your app is either running in the background, or in the foreground. It's best to be connected to the debugger. Send the curl request, and in the logs, you should see the <code>title</code> and <code>body</code> printed out.
+If you have trouble receiving messages see the below for the troubleshooting section.
+More on this whole background/foreground thing later!
+We're done, at least for now on the app. On to refining the backend (and seeing in detail what we did with that curl request).
+
+## The backend
+As already stated, in order to send messages to a single device, the instanceID token is needed. For this the backend is really made up of two parts:
+- receiving and storing the InstanceID Token
+- sending a message to the device
+
+### Receiving and storing the InstanceID token
+I won't go into too much detail on the first point; it's really just building a REST API that accepts the value. A couple of key requirements are to make sure to <em>link the InstanceID token with a device identifier, and preferably the user</em>. This provides the link, so that at the application level on the server/app we can send a message to a user or device, lookup the InstanceID token, and then fire off the message via FCM.
+
+## Sending messages to the device
+Onto the second part, sending a message to the device. Google's documentation on this is at first a little misleading. There are two APIs and they are both valid, though one is label <code>legacy</code> (I thought we had semver for this).
+
+If you have an existing GCM system, the only thing you need to do is change the base URL, from <code>gcm-http.googleapis.com/gcm/</code> to <code>fcm.googleapis.com/fcm/</code>. The rest of the API will still work. As Google states in their documentation, they are not removing them yet.
+
+<blockquote>"The FCM equivalent of the GCM HTTP protocol is labelled "legacy" only to distinguish it clearly from the HTTP v1 API. The API is fully supported and Google has no near-term plan to deprecate it." Google - <a href="https://developers.google.com/cloud-messaging/android/android-migrate-fcm#update-server-endpoints">https://developers.google.com/cloud-messaging/android/android-migrate-fcm#update-server-endpoints</a></blockquote>
+When we send the curl request, we used the legacy API, with the newly updated endpoint. According to Google's docs, everything is fine with this approach, nothing is going to be turned off.
+
+### What's with legacy, should I upgrade?
+The new API is titled 'FCM HTTP v1 API' (again it's called v1, but it's really the second version the legacy one was the first), and has two main benefits:
+
+- Security is a little better (short-lived OAuth 2.0 tokens)
+- Custom messages per platform (ie iOS vs Android)
+
+The security tokens are nice, but not essential. For the platform messages, well, we're using Xamarin Forms so from a high level the business logic should be same, ie you probably don't need specific messages.
+
+### If targeting the new API
+Their main guide is here: <a href="https://firebase.google.com/docs/cloud-messaging/migrate-v1">https://firebase.google.com/docs/cloud-messaging/migrate-v1</a> it's simple if you're using Java.
+
+If you're using .NET, the library and setup details are here: <a href="https://firebase.google.com/docs/admin/setup">https://firebase.google.com/docs/admin/setup</a>
+
+### Sending messages with the 'Legacy' API
+Full docs are <a href="https://firebase.google.com/docs/cloud-messaging/http-server-ref">here</a>,but that's rather verbose and abstract.
+Here is the curl example again:
 <table class="pre">
 <tbody>
 <tr>
@@ -430,11 +466,12 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 </tr>
 </tbody>
 </table>
-<p>I have only shown the example that works by interpreting the message in the app - the <code>data</code> field in the payload. Google supports another field <code>notification</code> which is what the firebase console sends. Stick with <code>data</code> and handle the message locally on the phone. Everything will be fine (or better than using the notification version).</p>
-<p>That should be all you need to get the backend going under the 'legacy' HTTP APIs. As already stated, Google is not turning these off, has no plans too yet.</p>
-<h4>HTTP v1 API (The new API)</h4>
-<p>Because this API requires short-lived OAuth 2.0 tokens to send a message, it is much harder to test via curl. As a result, a library is generally used. See above to find the .NET library.</p>
-<p>For the sake of completeness here is what a curl request would look like under the new 'FCM HTTP v1' API.</p>
+I have only shown the example that works by interpreting the message in the app - the <code>data</code> field in the payload. Google supports another field <code>notification</code> which is what the firebase console sends. Stick with <code>data</code> and handle the message locally on the phone. Everything will be fine (or better than using the notification version).
+That should be all you need to get the backend going under the 'legacy' HTTP APIs. As already stated, Google is not turning these off, has no plans too yet.
+
+### HTTP v1 API (The new API)
+Because this API requires short-lived OAuth 2.0 tokens to send a message, it is much harder to test via curl. As a result, a library is generally used. See above to find the .NET library.
+For the sake of completeness here is what a curl request would look like under the new 'FCM HTTP v1' API.
 <table class="pre">
 <tbody>
 <tr>
@@ -461,11 +498,13 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 </tr>
 </tbody>
 </table>
-<p>The big difference about this though, is that using the curl is really hard. To send this message, we can't use the API key. Instead, we need to generate an OAuth short-lived token - that's hard. For OAuth, use libraries.</p>
-<p><strong>HTTP v1 API with .NET</strong></p>
-<p>Instead of using, curl, let's change to .NET, and use that. We'll need this to deploy to the backend anyway. To run this code locally, I'm going to use a simple console application running on dotnet core 2.*</p>
-<p>Install the required NuGet package - FirebaseAdmin (at the time or writing the latest version was 1.2.0).</p>
-<p>First we need to authenticate:</p>
+The big difference about this though, is that using the curl is really hard. To send this message, we can't use the API key. Instead, we need to generate an OAuth short-lived token - that's hard. For OAuth, use libraries.
+
+## HTTP v1 API with .NET
+Instead of using, curl, let's change to .NET, and use that. We'll need this to deploy to the backend anyway. To run this code locally, I'm going to use a simple console application running on dotnet core 2.*
+
+Install the required NuGet package - FirebaseAdmin (at the time or writing the latest version was 1.2.0).
+First we need to authenticate:
 <table class="pre">
 <tbody>
 <tr>
@@ -488,11 +527,11 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 </tr>
 </tbody>
 </table>
-<p>To get the JSON secret key, in firebase generate a private key pair. The file will then be offered as a download. This is a password, so treat it with the same care.</p>
-<p>// Insert images to get private key</p>
-<p><img src="{{ site.baseurl }}/assets/img/Service-Accounts.png" alt="Smiley face"/></p>
-<p><img src="{{ site.baseurl }}/assets/img/Generate-Key-Pair.png" alt="Smiley face"/></p>
-<p>Now that the app is authenticated, it's time to send a message:</p>
+To get the JSON secret key, in firebase generate a private key pair. The file will then be offered as a download. This is a password, so treat it with the same care.
+// Insert images to get private key
+<img src="{{ site.baseurl }}/assets/img/Service-Accounts.png" alt="Smiley face"/>
+<img src="{{ site.baseurl }}/assets/img/Generate-Key-Pair.png" alt="Smiley face"/>
+Now that the app is authenticated, it's time to send a message:
 <table class="pre">
 <tbody>
 <tr>
@@ -523,24 +562,25 @@ If you're using .NET, the library and setup details are here: <a href="https://f
         <span onmouseout="hideTip(event, 'fs20', 35)" onmouseover="showTip(event, 'fs20', 35)" class="id">Data</span> <span class="o">=</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs21', 36)" onmouseover="showTip(event, 'fs21', 36)" class="id">dict</span> <span class="pn">[</span>
             <span class="s">"title"</span><span class="pn">,</span> <span class="s">"Pushy"</span>
             <span class="s">"body"</span><span class="pn">,</span> <span class="s">"Pushy is alive and well"</span>
-        <span class="pn">]</span> <span class="o">|&gt;</span> <span class="id">ReadOnlyDictionary</span><span class="pn">)</span><span class="pn">,</span>
+        <span class="pn">]</span> <span class="o">|></span> <span class="id">ReadOnlyDictionary</span><span class="pn">)</span><span class="pn">,</span>
         <span class="id">Token</span> <span class="o">=</span> <span class="id">registrationToken</span><span class="pn">)</span>
 
 <span class="k">try</span>
-    <span class="k">let</span> <span class="id">response</span> <span class="o">=</span> <span class="id">FirebaseMessaging</span><span class="pn">.</span><span class="id">DefaultInstance</span><span class="pn">.</span><span class="id">SendAsync</span><span class="pn">(</span><span class="id">message</span><span class="pn">)</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs22', 37)" onmouseover="showTip(event, 'fs22', 37)" class="id">Async</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs23', 38)" onmouseover="showTip(event, 'fs23', 38)" class="id">AwaitTask</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs22', 39)" onmouseover="showTip(event, 'fs22', 39)" class="id">Async</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs24', 40)" onmouseover="showTip(event, 'fs24', 40)" class="id">RunSynchronously</span>
+    <span class="k">let</span> <span class="id">response</span> <span class="o">=</span> <span class="id">FirebaseMessaging</span><span class="pn">.</span><span class="id">DefaultInstance</span><span class="pn">.</span><span class="id">SendAsync</span><span class="pn">(</span><span class="id">message</span><span class="pn">)</span> <span class="o">|></span> <span onmouseout="hideTip(event, 'fs22', 37)" onmouseover="showTip(event, 'fs22', 37)" class="id">Async</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs23', 38)" onmouseover="showTip(event, 'fs23', 38)" class="id">AwaitTask</span> <span class="o">|></span> <span onmouseout="hideTip(event, 'fs22', 39)" onmouseover="showTip(event, 'fs22', 39)" class="id">Async</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs24', 40)" onmouseover="showTip(event, 'fs24', 40)" class="id">RunSynchronously</span>
     <span class="id">Console</span><span class="pn">.</span><span class="id">WriteLine</span><span class="pn">(</span><span class="s">"Successfully sent message: "</span> <span class="o">+</span> <span class="id">response</span><span class="pn">)</span>
-<span class="k">with</span> <span class="id">e</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs25', 41)" onmouseover="showTip(event, 'fs25', 41)" class="id">printfn</span> <span class="s">"Failed to send message:\n%s\n%s"</span> <span class="id">e</span><span class="pn">.</span><span class="id">Message</span> <span class="id">e</span><span class="pn">.</span><span class="id">StackTrace</span> 
+<span class="k">with</span> <span class="id">e</span> <span class="k">-></span> <span onmouseout="hideTip(event, 'fs25', 41)" onmouseover="showTip(event, 'fs25', 41)" class="id">printfn</span> <span class="s">"Failed to send message:\n%s\n%s"</span> <span class="id">e</span><span class="pn">.</span><span class="id">Message</span> <span class="id">e</span><span class="pn">.</span><span class="id">StackTrace</span> 
 </code></pre>
 </td>
 </tr>
 </tbody>
 </table>
-<p>That is all the code needed to generate a request <a href="https://gist.github.com/willsam100/8f249673187ffbfeffc26425bea19583">see here for full snippet</a>.</p>
-<p>Use <code>dotnet run</code> and see messages sent to your device. Again, if you have trouble receiving messages see the below for the troubleshooting section.</p>
-<p>Once everything is working, it is possible to make the required changes and deploy a variation of this code to production.</p>
-<h2>Improving the mobile app experience</h2>
-<p>So far we only have messages showing as logs on the device, which is clearly not good enough for production. Let's fix that.</p>
-<p>Again, Android never makes things easy. For Android 8.* and higher we need a notification channel. All up here is the code added to <code>MyFcmListenerService</code></p>
+That is all the code needed to generate a request <a href="https://gist.github.com/willsam100/8f249673187ffbfeffc26425bea19583">see here for full snippet</a>.
+Use <code>dotnet run</code> and see messages sent to your device. Again, if you have trouble receiving messages see the below for the troubleshooting section.
+Once everything is working, it is possible to make the required changes and deploy a variation of this code to production.
+
+## Improving the mobile app experience
+So far we only have messages showing as logs on the device, which is clearly not good enough for production. Let's fix that.
+Again, Android never makes things easy. For Android 8.* and higher we need a notification channel. All up here is the code added to <code>MyFcmListenerService</code>
 <table class="pre">
 <tbody>
 <tr>
@@ -605,11 +645,11 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 <span class="k">let</span> <span class="id">showNotification</span> <span class="pn">(</span><span class="id">title</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 42)" onmouseover="showTip(event, 'fs4', 42)" class="id">string</span><span class="pn">)</span> <span class="pn">(</span><span class="id">body</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 43)" onmouseover="showTip(event, 'fs4', 43)" class="id">string</span><span class="pn">)</span> <span class="o">=</span> 
 
     <span class="id">Debug</span><span class="pn">.</span><span class="id">WriteLine</span> <span class="s">"Showing notification"</span>
-    <span class="k">let</span> <span class="id">intent</span> <span class="o">=</span> <span class="k">new</span> <span class="id">Intent</span><span class="pn">(</span><span class="id">context</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs8', 44)" onmouseover="showTip(event, 'fs8', 44)" class="id">typeof</span><span class="pn">&lt;</span><span class="id">MainActivity</span><span class="pn">&gt;</span><span class="pn">)</span>
+    <span class="k">let</span> <span class="id">intent</span> <span class="o">=</span> <span class="k">new</span> <span class="id">Intent</span><span class="pn">(</span><span class="id">context</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs8', 44)" onmouseover="showTip(event, 'fs8', 44)" class="id">typeof</span><span class="pn">&lt;</span><span class="id">MainActivity</span><span class="pn">></span><span class="pn">)</span>
     <span class="k">let</span> <span class="id">pendingIntent</span> <span class="o">=</span> <span class="id">PendingIntent</span><span class="pn">.</span><span class="id">GetActivity</span><span class="pn">(</span><span class="id">context</span><span class="pn">,</span> <span class="n">0</span><span class="pn">,</span> <span class="id">intent</span><span class="pn">,</span> <span class="id">PendingIntentFlags</span><span class="pn">.</span><span class="id">UpdateCurrent</span><span class="pn">)</span>
 
     <span class="k">let</span> <span class="id">notification</span> <span class="o">=</span> 
-        <span class="k">if</span> <span class="pn">(</span><span class="id">Build</span><span class="pn">.</span><span class="id">VERSION</span><span class="pn">.</span><span class="id">SdkInt</span> <span class="pn">&gt;</span><span class="o">=</span> <span class="id">Android</span><span class="pn">.</span><span class="id">OS</span><span class="pn">.</span><span class="id">BuildVersionCodes</span><span class="pn">.</span><span class="id">O</span><span class="pn">)</span> <span class="k">then</span>
+        <span class="k">if</span> <span class="pn">(</span><span class="id">Build</span><span class="pn">.</span><span class="id">VERSION</span><span class="pn">.</span><span class="id">SdkInt</span> <span class="pn">></span><span class="o">=</span> <span class="id">Android</span><span class="pn">.</span><span class="id">OS</span><span class="pn">.</span><span class="id">BuildVersionCodes</span><span class="pn">.</span><span class="id">O</span><span class="pn">)</span> <span class="k">then</span>
             <span class="k">let</span> <span class="pn">(</span><span class="id">CHANNEL_ID</span><span class="pn">,</span> <span class="id">mChannel</span><span class="pn">)</span> <span class="o">=</span> <span class="id">createNotificationChannel</span><span class="pn">(</span><span class="pn">)</span>
             <span class="id">NotificationManager</span><span class="pn">.</span><span class="id">FromContext</span><span class="pn">(</span><span class="id">context</span><span class="pn">)</span><span class="pn">.</span><span class="id">CreateNotificationChannel</span> <span class="id">mChannel</span>
             <span class="pn">(</span><span class="k">new</span> <span class="id">Android</span><span class="pn">.</span><span class="id">App</span><span class="pn">.</span><span class="id">Notification</span><span class="pn">.</span><span class="id">Builder</span><span class="pn">(</span><span class="id">context</span><span class="pn">,</span> <span class="id">CHANNEL_ID</span><span class="pn">)</span><span class="pn">)</span>
@@ -637,9 +677,9 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 </tr>
 </tbody>
 </table>
-<p>This code handles all versions of Android. It will show the notification with the title, body and icon. When the user taps the notification, it will open the <code>MainActivity</code> and also clear the notification.</p>
-<blockquote><p>TIP: F# does not like circular dependencies but Android requires them here. See the full repo at the bottom of the post for how to structure to work around that. Obviously, you could just use C#.</p></blockquote>
-<p>To call the function, we can update <code>OnMessageReceived</code> method with the following:</p>
+This code handles all versions of Android. It will show the notification with the title, body and icon. When the user taps the notification, it will open the <code>MainActivity</code> and also clear the notification.
+<blockquote>TIP: F# does not like circular dependencies but Android requires them here. See the full repo at the bottom of the post for how to structure to work around that. Obviously, you could just use C#.</blockquote>
+To call the function, we can update <code>OnMessageReceived</code> method with the following:
 <table class="pre">
 <tbody>
 <tr>
@@ -664,35 +704,50 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 </tr>
 </tbody>
 </table>
-<p>This is all that is required to always show a notification to the user, regardless of what state the app is in (Background or foreground).</p>
-<h4>Are we done yet - Troubleshooting and common problems</h4>
-<p>What we have now, the firebase console, the app code and the backend server code is enough for a feature roll-out to send push notifications to a device. (I assume the app pushes the server token to the backend)</p>
-<p>There's one small catch though - it's about Android.</p>
-<p>Android does not send push notifications to an app that is not running (Foreground and background are fine). For most users, this is not a problem, but with some manufacturers they have modified Android to kill apps in the background.</p>
-<p>To solve this, you will need to notify customers on certain phones, to change their settings to keep the app going. Here is a link to a table that shows how to navigate to the various settings for each phone.</p>
-<p><a href="https://github.com/invertase/react-native-firebase/issues/1238#issuecomment-410422872">https://github.com/invertase/react-native-firebase/issues/1238#issuecomment-410422872</a></p>
-<p>For more information on this, here a couple of posts:<br />
-<a href="https://onesignal.com/blog/manufacturers-interfere-with-reliable-notifications/">Manufacturers interfere with reliable notifications</a><br />
-<a href="https://medium.freecodecamp.org/why-your-push-notifications-never-see-the-light-of-day-3fa297520793">Why your push notifications never see the light of day</a></p>
-<h4>What does it mean to kill the Android app?</h4>
-<p>To kill an app:<br />
-- Debug the app from Visual Studio, and then stop the app from Visual Studio<br />
-- Open Settings -&gt; App -&gt; Your App (Pushy) -&gt; Force Stop</p>
-<p>In these cases the app is dead. Sending push notifications won't work.</p>
-<p>For most versions of Android, the following will NOT kill the app:</p>
-<ul>
-<li>Open the app, then press the HOME button</li>
-<li>Open the app, then press the BACK button, and see the launcher</li>
-<li>Clear the app from the RECENTS menu</li>
-</ul>
-<p>In each of these scenarios the process for the app should still be running (The first scenario will still have an Activity too). It should stay running too if the app is running on a good version of Android. After a few days, the app should still be there, ready to receive a push notification.</p>
-<p>A bad (in the context of a developer wanted to show a user push notification from an app) version of Android will not leave the app running in the background, and will instead kill the app. This is done in the name of battery saving (the settings to disable this are under the battery. How much it will save on battery is another question). See the section above for details on how to address this (as developers we must educate our users, as there are no APIs to disable the battery saving techniques).</p>
-<h2>Don't show a notification when in the foreground</h2>
-<p>When the user is using the app, it seems a bit silly to send them a notification. Why not just update the page they are viewing, assuming it has the capacity to do that.</p>
-<p>The code that follows is a very coupled way of doing this with Xamarin Forms.</p>
-<h4>Detecting if the app is in the background.</h4>
-<p>The first step is to detect if the app is in the foreground or background. A good test of this is to see if we have an activity.</p>
-<p>Using the NuGet package from James, <code>Plugin.CurrentActivity</code> we can find that out. It is also possible to find out what [Xamairn Forms] page is showing. First, we need to update <code>MainActivity</code> to store the Xamarin Forms app.</p>
+This is all that is required to always show a notification to the user, regardless of what state the app is in (Background or foreground).
+
+
+### Are we done yet - Troubleshooting and common problems
+What we have now, the firebase console, the app code and the backend server code is enough for a feature roll-out to send push notifications to a device. (I assume the app pushes the server token to the backend)
+
+There's one small catch though - it's about Android.
+
+Android does not send push notifications to an app that is not running (Foreground and background are fine). For most users, this is not a problem, but with some manufacturers they have modified Android to kill apps in the background.
+
+To solve this, you will need to notify customers on certain phones, to change their settings to keep the app going. Here is a link to a table that shows how to navigate to the various settings for each phone.
+
+<a href="https://github.com/invertase/react-native-firebase/issues/1238#issuecomment-410422872">https://github.com/invertase/react-native-firebase/issues/1238#issuecomment-410422872</a>
+For more information on this, here a couple of posts:
+
+<a href="https://onesignal.com/blog/manufacturers-interfere-with-reliable-notifications/">Manufacturers interfere with reliable notifications</a>
+
+<a href="https://medium.freecodecamp.org/why-your-push-notifications-never-see-the-light-of-day-3fa297520793">Why your push notifications never see the light of day</a>
+
+### What does it mean to kill the Android app?
+To kill an app:
+- Debug the app from Visual Studio, and then stop the app from Visual Studio
+- Open Settings -> App -> Your App (Pushy) -> Force Stop
+
+In these cases the app is dead. Sending push notifications won't work.
+For most versions of Android, the following will NOT kill the app:
+- Open the app, then press the HOME button
+- Open the app, then press the BACK button, and see the launcher
+- Clear the app from the RECENTS menu
+
+In each of these scenarios the process for the app should still be running (The first scenario will still have an Activity too). It should stay running too if the app is running on a good version of Android. After a few days, the app should still be there, ready to receive a push notification.
+
+A bad (in the context of a developer wanted to show a user push notification from an app) version of Android will not leave the app running in the background, and will instead kill the app. This is done in the name of battery saving (the settings to disable this are under the battery. How much it will save on battery is another question). See the section above for details on how to address this (as developers we must educate our users, as there are no APIs to disable the battery saving techniques).
+
+## Don't show a notification when in the foreground
+When the user is using the app, it seems a bit silly to send them a notification. Why not just update the page they are viewing, assuming it has the capacity to do that.
+
+The code that follows is a very coupled way of doing this with Xamarin Forms.
+
+### Detecting if the app is in the background.
+The first step is to detect if the app is in the foreground or background. A good test of this is to see if we have an activity.
+Using the NuGet package from James, <code>Plugin.CurrentActivity</code> we can find that out. It is also possible to find out what [Xamairn Forms] page is showing. 
+
+First, we need to update <code>MainActivity</code> to store the Xamarin Forms app.
 <table class="pre">
 <tbody>
 <tr>
@@ -714,7 +769,7 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Using option types, because null was a billion dollar mistake</span>
 <span class="k">let</span> <span class="k">mutable</span> <span class="id">formsApp</span><span class="pn">:</span> <span class="id">Pushy</span><span class="pn">.</span><span class="id">App</span> <span onmouseout="hideTip(event, 'fs26', 45)" onmouseover="showTip(event, 'fs26', 45)" class="id">option</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs27', 46)" onmouseover="showTip(event, 'fs27', 46)" class="id">None</span>
 <span class="k">member</span> <span class="id">this</span><span class="pn">.</span><span class="id">MainPage</span><span class="pn">(</span><span class="pn">)</span><span class="pn">:</span> <span class="id">Xamarin</span><span class="pn">.</span><span class="id">Forms</span><span class="pn">.</span><span class="id">Page</span> <span onmouseout="hideTip(event, 'fs28', 47)" onmouseover="showTip(event, 'fs28', 47)" class="id">Option</span> <span class="o">=</span> 
-    <span class="id">formsApp</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs28', 48)" onmouseover="showTip(event, 'fs28', 48)" class="id">Option</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs29', 49)" onmouseover="showTip(event, 'fs29', 49)" class="id">map</span> <span class="pn">(</span><span class="k">fun</span> <span class="id">x</span> <span class="k">-&gt;</span> <span class="id">x</span><span class="pn">.</span><span class="id">MainPage</span><span class="pn">)</span>
+    <span class="id">formsApp</span> <span class="o">|></span> <span onmouseout="hideTip(event, 'fs28', 48)" onmouseover="showTip(event, 'fs28', 48)" class="id">Option</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs29', 49)" onmouseover="showTip(event, 'fs29', 49)" class="id">map</span> <span class="pn">(</span><span class="k">fun</span> <span class="id">x</span> <span class="k">-></span> <span class="id">x</span><span class="pn">.</span><span class="id">MainPage</span><span class="pn">)</span>
 
 <span class="k">override</span> <span class="id">this</span><span class="pn">.</span><span class="id">OnCreate</span> <span class="pn">(</span><span class="id">bundle</span><span class="pn">:</span> <span class="id">Bundle</span><span class="pn">)</span> <span class="o">=</span>
     <span class="c">// Rest of code omitted for brevity </span>
@@ -727,7 +782,7 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 </tr>
 </tbody>
 </table>
-<p>And now the checking to return if the app is in the background, or the showing <code>MainPage</code> from Xamairn Forms.</p>
+And now the checking to return if the app is in the background, or the showing <code>MainPage</code> from Xamairn Forms.
 <table class="pre">
 <tbody>
 <tr>
@@ -747,20 +802,20 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 <td class="snippet">
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="pn">(</span><span class="pn">|</span><span class="id">HasForegroundUI</span><span class="pn">|</span><span class="id">InBackground</span><span class="pn">|</span><span class="pn">)</span> <span class="pn">(</span><span class="id">activity</span><span class="pn">:</span> <span class="id">Activity</span><span class="pn">)</span> <span class="o">=</span> 
     <span class="k">match</span> <span class="id">activity</span> <span class="k">with</span> 
-    <span class="pn">|</span> <span class="o">:?</span> <span class="id">MainActivity</span> <span class="k">as</span> <span class="id">mainActivity</span> <span class="k">-&gt;</span> <span class="c">// Type check if have the MainActivity</span>
+    <span class="pn">|</span> <span class="o">:?</span> <span class="id">MainActivity</span> <span class="k">as</span> <span class="id">mainActivity</span> <span class="k">-></span> <span class="c">// Type check if have the MainActivity</span>
         <span class="k">match</span> <span class="id">mainActivity</span><span class="pn">.</span><span class="id">MainPage</span> <span class="pn">(</span><span class="pn">)</span> <span class="k">with</span> 
-        <span class="pn">|</span> <span onmouseout="hideTip(event, 'fs30', 52)" onmouseover="showTip(event, 'fs30', 52)" class="id">Some</span> <span class="id">mainPage</span> <span class="k">-&gt;</span>              <span class="c">// Check if we have a xamarin.Forms app</span>
+        <span class="pn">|</span> <span onmouseout="hideTip(event, 'fs30', 52)" onmouseover="showTip(event, 'fs30', 52)" class="id">Some</span> <span class="id">mainPage</span> <span class="k">-></span>              <span class="c">// Check if we have a xamarin.Forms app</span>
             <span class="k">match</span> <span class="id">mainPage</span> <span class="k">with</span> 
-            <span class="pn">|</span> <span class="o">:?</span> <span class="id">Pushy</span><span class="pn">.</span><span class="id">MainPage</span> <span class="k">as</span> <span class="id">mainPage</span> <span class="k">-&gt;</span> <span class="id">HasForegroundUI</span> <span class="id">mainPage</span>  <span class="c">// Check the the MainPage is showing</span>
-            <span class="pn">|</span> <span class="id">_</span> <span class="k">-&gt;</span> <span class="id">InBackground</span>
-        <span class="pn">|</span> <span onmouseout="hideTip(event, 'fs27', 53)" onmouseover="showTip(event, 'fs27', 53)" class="id">None</span> <span class="k">-&gt;</span> <span class="id">InBackground</span>
-    <span class="pn">|</span> <span class="id">_</span> <span class="k">-&gt;</span> <span class="id">InBackground</span>
+            <span class="pn">|</span> <span class="o">:?</span> <span class="id">Pushy</span><span class="pn">.</span><span class="id">MainPage</span> <span class="k">as</span> <span class="id">mainPage</span> <span class="k">-></span> <span class="id">HasForegroundUI</span> <span class="id">mainPage</span>  <span class="c">// Check the the MainPage is showing</span>
+            <span class="pn">|</span> <span class="id">_</span> <span class="k">-></span> <span class="id">InBackground</span>
+        <span class="pn">|</span> <span onmouseout="hideTip(event, 'fs27', 53)" onmouseover="showTip(event, 'fs27', 53)" class="id">None</span> <span class="k">-></span> <span class="id">InBackground</span>
+    <span class="pn">|</span> <span class="id">_</span> <span class="k">-></span> <span class="id">InBackground</span>
 </code></pre>
 </td>
 </tr>
 </tbody>
 </table>
-<p>This code does a series of type checks and must return either <code>InForeground</code> with the <code>MainPage</code> or <code>InBackground</code> with no data. The following code is how to call it:</p>
+This code does a series of type checks and must return either <code>InForeground</code> with the <code>MainPage</code> or <code>InBackground</code> with no data. The following code is how to call it:
 <table class="pre">
 <tbody>
 <tr>
@@ -785,8 +840,8 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 <td class="snippet">
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="id">handleNotification</span> <span class="id">title</span> <span class="id">body</span> <span class="o">=</span> 
     <span class="k">match</span> <span class="id">CrossCurrentActivity</span><span class="pn">.</span><span class="id">Current</span><span class="pn">.</span><span class="id">Activity</span> <span class="k">with</span> <span class="c">// Check the current activity</span>
-    <span class="pn">|</span> <span class="id">HasForegroundUI</span> <span class="id">mainPage</span> <span class="k">-&gt;</span> <span class="id">mainPage</span><span class="pn">.</span><span class="id">HandleMessage</span> <span class="id">title</span> <span class="id">body</span> <span class="c">// We need to define this method</span>
-    <span class="pn">|</span> <span class="id">InBackground</span> <span class="k">-&gt;</span> 
+    <span class="pn">|</span> <span class="id">HasForegroundUI</span> <span class="id">mainPage</span> <span class="k">-></span> <span class="id">mainPage</span><span class="pn">.</span><span class="id">HandleMessage</span> <span class="id">title</span> <span class="id">body</span> <span class="c">// We need to define this method</span>
+    <span class="pn">|</span> <span class="id">InBackground</span> <span class="k">-></span> 
         <span class="c">// TODO: show notification</span>
         <span class="id">showNotification</span> <span class="id">title</span> <span class="id">body</span> <span class="c">// We will need to replace this later</span>
 
@@ -797,17 +852,18 @@ If you're using .NET, the library and setup details are here: <a href="https://f
         <span class="k">let</span> <span class="id">title</span><span class="pn">,</span> <span class="id">body</span> <span class="o">=</span> <span class="pn">(</span><span class="id">data</span><span class="pn">.</span><span class="pn">[</span><span class="s">"title"</span><span class="pn">]</span><span class="pn">,</span> <span class="id">data</span><span class="pn">.</span><span class="pn">[</span><span class="s">"body"</span><span class="pn">]</span><span class="pn">)</span>
         <span class="id">handleNotification</span> <span class="id">title</span> <span class="id">body</span> <span class="c">// Updated to call our new function</span>
 
-    <span class="id">data</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs17', 54)" onmouseover="showTip(event, 'fs17', 54)" class="id">Map</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs19', 55)" onmouseover="showTip(event, 'fs19', 55)" class="id">iter</span> <span class="pn">(</span><span class="k">fun</span> <span class="id">key</span> <span class="id">value</span> <span class="k">-&gt;</span> <span class="id">Debug</span><span class="pn">.</span><span class="id">WriteLine</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs9', 56)" onmouseover="showTip(event, 'fs9', 56)" class="id">sprintf</span> <span class="s">"%s:%s"</span> <span class="id">key</span> <span class="id">value</span><span class="pn">)</span>
+    <span class="id">data</span> <span class="o">|></span> <span onmouseout="hideTip(event, 'fs17', 54)" onmouseover="showTip(event, 'fs17', 54)" class="id">Map</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs19', 55)" onmouseover="showTip(event, 'fs19', 55)" class="id">iter</span> <span class="pn">(</span><span class="k">fun</span> <span class="id">key</span> <span class="id">value</span> <span class="k">-></span> <span class="id">Debug</span><span class="pn">.</span><span class="id">WriteLine</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs9', 56)" onmouseover="showTip(event, 'fs9', 56)" class="id">sprintf</span> <span class="s">"%s:%s"</span> <span class="id">key</span> <span class="id">value</span><span class="pn">)</span>
 </code></pre>
 </td>
 </tr>
 </tbody>
 </table>
-<p>Here pass in the current activity, and will just pattern match on the result of the function above.</p>
-<blockquote><p>Tip: If we miss a case here, the compiler will let us know. F# benefits.</p></blockquote>
-<p>When the app is in the background, we need to show the notification as we previously did. We could call <code>showNotification</code> as before, but that will cause us problems in a moment.</p>
-<h4>Wiring up the MainPage</h4>
-<p>In <code>MainPage</code> (Forms) we can now define the <code>HandleMessage</code> method:</p>
+Here pass in the current activity, and will just pattern match on the result of the function above.
+<blockquote>Tip: If we miss a case here, the compiler will let us know. F# benefits.</blockquote>
+When the app is in the background, we need to show the notification as we previously did. We could call <code>showNotification</code> as before, but that will cause us problems in a moment.
+
+### Wiring up the MainPage
+In <code>MainPage</code> (Forms) we can now define the <code>HandleMessage</code> method:
 <table class="pre">
 <tbody>
 <tr>
@@ -821,19 +877,22 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 <td class="snippet">
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">member</span> <span class="id">this</span><span class="pn">.</span><span class="id">HandleMessage</span> <span class="id">title</span> <span class="id">body</span> <span class="o">=</span> 
     <span class="c">// MainThread.BeginInvokeOnMainThread is from Xamarin.Essentials</span>
-    <span class="id">MainThread</span><span class="pn">.</span><span class="id">BeginInvokeOnMainThread</span> <span class="pn">(</span><span class="k">fun</span> <span class="pn">(</span><span class="pn">)</span> <span class="k">-&gt;</span> 
+    <span class="id">MainThread</span><span class="pn">.</span><span class="id">BeginInvokeOnMainThread</span> <span class="pn">(</span><span class="k">fun</span> <span class="pn">(</span><span class="pn">)</span> <span class="k">-></span> 
         <span class="id">label</span><span class="pn">.</span><span class="id">Text</span> <span class="k">&lt;-</span> <span onmouseout="hideTip(event, 'fs9', 57)" onmouseover="showTip(event, 'fs9', 57)" class="id">sprintf</span> <span class="s">"Received Message: %s"</span> <span class="id">body</span> <span class="pn">)</span>
 </code></pre>
 </td>
 </tr>
 </tbody>
 </table>
-<h4>It works, but not for one case</h4>
-<p>With that code in place, run it and see that when the app is in the foreground it works, and when you press the BACK button and then send a message it works (shows a notification).</p>
-<p>It FAILS, when you open the app, press the HOME button, and then send a notification. The UI is updated, instead of showing a notification, but the UI is not actually visible. Weird Android. We can fix this.</p>
-<h4>Pull out the notification logic</h4>
-<p>We will need to pull out the notification logic, attach it to an interface, and allow it to be called from <code>MainPage</code> (as well as <code>OnMessageReceived</code>).</p>
-<p>Above <code>MainPage</code> the following interface can be declared:</p>
+
+### It works, but not for one case
+With that code in place, run it and see that when the app is in the foreground it works, and when you press the BACK button and then send a message it works (shows a notification).
+
+It FAILS, when you open the app, press the HOME button, and then send a notification. The UI is updated, instead of showing a notification, but the UI is not actually visible. Weird Android. We can fix this.
+
+### Pull out the notification logic
+We will need to pull out the notification logic, attach it to an interface, and allow it to be called from <code>MainPage</code> (as well as <code>OnMessageReceived</code>).
+Above <code>MainPage</code> the following interface can be declared:
 <table class="pre">
 <tbody>
 <tr>
@@ -844,13 +903,13 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 </td>
 <td class="snippet">
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span class="id">ShowNotification</span> <span class="o">=</span> 
-    <span class="k">abstract</span> <span class="k">member</span> <span class="id">ShowNotification</span><span class="pn">:</span> <span class="id">title</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 58)" onmouseover="showTip(event, 'fs4', 58)" class="id">string</span> <span class="k">-&gt;</span> <span class="id">body</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 59)" onmouseover="showTip(event, 'fs4', 59)" class="id">string</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs31', 60)" onmouseover="showTip(event, 'fs31', 60)" class="id">unit</span>
+    <span class="k">abstract</span> <span class="k">member</span> <span class="id">ShowNotification</span><span class="pn">:</span> <span class="id">title</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 58)" onmouseover="showTip(event, 'fs4', 58)" class="id">string</span> <span class="k">-></span> <span class="id">body</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 59)" onmouseover="showTip(event, 'fs4', 59)" class="id">string</span> <span class="k">-></span> <span onmouseout="hideTip(event, 'fs31', 60)" onmouseover="showTip(event, 'fs31', 60)" class="id">unit</span>
 </code></pre>
 </td>
 </tr>
 </tbody>
 </table>
-<p>A class can then be added in Android to implement that, without notification code</p>
+A class can then be added in Android to implement that, without notification code
 <table class="pre">
 <tbody>
 <tr>
@@ -923,11 +982,11 @@ If you're using .NET, the library and setup details are here: <a href="https://f
     <span class="k">member</span> <span class="id">this</span><span class="pn">.</span><span class="id">ShowNotification</span> <span class="pn">(</span><span class="id">title</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 61)" onmouseover="showTip(event, 'fs4', 61)" class="id">string</span><span class="pn">)</span> <span class="pn">(</span><span class="id">body</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 62)" onmouseover="showTip(event, 'fs4', 62)" class="id">string</span><span class="pn">)</span> <span class="o">=</span> 
 
         <span class="id">Debug</span><span class="pn">.</span><span class="id">WriteLine</span> <span class="s">"Showing notification"</span>
-        <span class="k">let</span> <span class="id">intent</span> <span class="o">=</span> <span class="k">new</span> <span class="id">Intent</span><span class="pn">(</span><span class="id">context</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs8', 63)" onmouseover="showTip(event, 'fs8', 63)" class="id">typeof</span><span class="pn">&lt;</span><span class="id">MainActivity</span><span class="pn">&gt;</span><span class="pn">)</span>
+        <span class="k">let</span> <span class="id">intent</span> <span class="o">=</span> <span class="k">new</span> <span class="id">Intent</span><span class="pn">(</span><span class="id">context</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs8', 63)" onmouseover="showTip(event, 'fs8', 63)" class="id">typeof</span><span class="pn">&lt;</span><span class="id">MainActivity</span><span class="pn">></span><span class="pn">)</span>
         <span class="k">let</span> <span class="id">pendingIntent</span> <span class="o">=</span> <span class="id">PendingIntent</span><span class="pn">.</span><span class="id">GetActivity</span><span class="pn">(</span><span class="id">context</span><span class="pn">,</span> <span class="n">0</span><span class="pn">,</span> <span class="id">intent</span><span class="pn">,</span> <span class="id">PendingIntentFlags</span><span class="pn">.</span><span class="id">UpdateCurrent</span><span class="pn">)</span>
 
         <span class="k">let</span> <span class="id">notification</span> <span class="o">=</span> 
-            <span class="k">if</span> <span class="pn">(</span><span class="id">Build</span><span class="pn">.</span><span class="id">VERSION</span><span class="pn">.</span><span class="id">SdkInt</span> <span class="pn">&gt;</span><span class="o">=</span> <span class="id">Android</span><span class="pn">.</span><span class="id">OS</span><span class="pn">.</span><span class="id">BuildVersionCodes</span><span class="pn">.</span><span class="id">O</span><span class="pn">)</span> <span class="k">then</span>
+            <span class="k">if</span> <span class="pn">(</span><span class="id">Build</span><span class="pn">.</span><span class="id">VERSION</span><span class="pn">.</span><span class="id">SdkInt</span> <span class="pn">></span><span class="o">=</span> <span class="id">Android</span><span class="pn">.</span><span class="id">OS</span><span class="pn">.</span><span class="id">BuildVersionCodes</span><span class="pn">.</span><span class="id">O</span><span class="pn">)</span> <span class="k">then</span>
                 <span class="k">let</span> <span class="pn">(</span><span class="id">CHANNEL_ID</span><span class="pn">,</span> <span class="id">mChannel</span><span class="pn">)</span> <span class="o">=</span> <span class="id">createNotificationChannel</span><span class="pn">(</span><span class="pn">)</span>
                 <span class="id">NotificationManager</span><span class="pn">.</span><span class="id">FromContext</span><span class="pn">(</span><span class="id">context</span><span class="pn">)</span><span class="pn">.</span><span class="id">CreateNotificationChannel</span> <span class="id">mChannel</span>
                 <span class="pn">(</span><span class="k">new</span> <span class="id">Android</span><span class="pn">.</span><span class="id">App</span><span class="pn">.</span><span class="id">Notification</span><span class="pn">.</span><span class="id">Builder</span><span class="pn">(</span><span class="id">context</span><span class="pn">,</span> <span class="id">CHANNEL_ID</span><span class="pn">)</span><span class="pn">)</span>
@@ -959,9 +1018,10 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 </tr>
 </tbody>
 </table>
-<blockquote><p>TIP: See the repo for full details, as this class also has circular dependencies which F# is helpfully discouraging us from creating.</p></blockquote>
-<h4>Checking if the UI is showing</h4>
-<p>To know if the app is actually showing on the UI we need to keep track of it (sadly this means state). This can be done with the <code>App</code> class from Xamairn.Forms</p>
+<blockquote>TIP: See the repo for full details, as this class also has circular dependencies which F# is helpfully discouraging us from creating.</blockquote>
+
+### Checking if the UI is showing
+To know if the app is actually showing on the UI we need to keep track of it (sadly this means state). This can be done with the <code>App</code> class from Xamairn.Forms
 <table class="pre">
 <tbody>
 <tr>
@@ -1004,9 +1064,10 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 </tr>
 </tbody>
 </table>
-<p>Here we are storing the apps state in a static variable <code>IsInForeground</code>, and then passing a method through to <code>MainPage</code> to read it <code>CheckInForeground</code>. Remember, that circular dependencies are bad, so passing method through is required (If using C# you could just read it off <code>App</code>).</p>
-<h4>Wire up all the details</h4>
-<p>Over on <code>MainPage</code>, we can now wire up all the details. Here is the new implementation of the method</p>
+Here we are storing the apps state in a static variable <code>IsInForeground</code>, and then passing a method through to <code>MainPage</code> to read it <code>CheckInForeground</code>. Remember, that circular dependencies are bad, so passing method through is required (If using C# you could just read it off <code>App</code>).
+
+### Wire up all the details
+Over on <code>MainPage</code>, we can now wire up all the details. Here is the new implementation of the method
 <table class="pre">
 <tbody>
 <tr>
@@ -1027,7 +1088,7 @@ If you're using .NET, the library and setup details are here: <a href="https://f
     <span class="c">// The Android Activity can still exist, but not be shown on the UI.</span>
     <span class="c">// only show when the activity (this page) is on the UI</span>
     <span class="k">if</span> <span class="id">isInForegound</span> <span class="pn">(</span><span class="pn">)</span> <span class="k">then</span> 
-        <span class="id">MainThread</span><span class="pn">.</span><span class="id">BeginInvokeOnMainThread</span> <span class="pn">(</span><span class="k">fun</span> <span class="pn">(</span><span class="pn">)</span> <span class="k">-&gt;</span> 
+        <span class="id">MainThread</span><span class="pn">.</span><span class="id">BeginInvokeOnMainThread</span> <span class="pn">(</span><span class="k">fun</span> <span class="pn">(</span><span class="pn">)</span> <span class="k">-></span> 
             <span class="id">label</span><span class="pn">.</span><span class="id">Text</span> <span class="k">&lt;-</span> <span onmouseout="hideTip(event, 'fs9', 68)" onmouseover="showTip(event, 'fs9', 68)" class="id">sprintf</span> <span class="s">"Received Message: %s"</span> <span class="id">body</span> <span class="pn">)</span>
     <span class="k">else</span> 
         <span class="id">Debug</span><span class="pn">.</span><span class="id">WriteLine</span> <span class="s">"Activity alive but in the background, showing notification"</span>
@@ -1037,7 +1098,7 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 </tr>
 </tbody>
 </table>
-<p><code>isInForegound</code> is expected and this is the function we passed into the class. We also need a way to show the notifications, which is where our interface comes in. For that reason, we need another dependency to our class <code>showNotification</code>. Our <code>MainPage</code> constructor now looks like this:</p>
+<code>isInForegound</code> is expected and this is the function we passed into the class. We also need a way to show the notifications, which is where our interface comes in. For that reason, we need another dependency to our class <code>showNotification</code>. Our <code>MainPage</code> constructor now looks like this:
 <table class="pre">
 <tbody>
 <tr>
@@ -1064,7 +1125,7 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 </tr>
 </tbody>
 </table>
-<p>Finally, we just need to update <code>MainActivity</code> so that it compiles:</p>
+Finally, we just need to update <code>MainActivity</code> so that it compiles:
 <table class="pre">
 <tbody>
 <tr>
@@ -1079,8 +1140,9 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 </tr>
 </tbody>
 </table>
-<h4>Wire up the details:</h4>
-<p>We can now update the <code>handleNotification</code> to use the <code>NotificationHandler</code> instead of the function directly.</p>
+
+### Wire up the details:
+We can now update the <code>handleNotification</code> to use the <code>NotificationHandler</code> instead of the function directly.
 <table class="pre">
 <tbody>
 <tr>
@@ -1096,8 +1158,8 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 <td class="snippet">
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="id">handleNotification</span> <span class="id">title</span> <span class="id">body</span> <span class="o">=</span> 
     <span class="k">match</span> <span class="id">CrossCurrentActivity</span><span class="pn">.</span><span class="id">Current</span><span class="pn">.</span><span class="id">Activity</span> <span class="k">with</span> <span class="c">// Check the current activity</span>
-    <span class="pn">|</span> <span class="id">HasForegroundUI</span> <span class="id">mainPage</span> <span class="k">-&gt;</span> <span class="id">mainPage</span><span class="pn">.</span><span class="id">HandleMessage</span> <span class="id">title</span> <span class="id">body</span> <span class="c">// We need to define this method</span>
-    <span class="pn">|</span> <span class="id">InBackground</span> <span class="k">-&gt;</span> 
+    <span class="pn">|</span> <span class="id">HasForegroundUI</span> <span class="id">mainPage</span> <span class="k">-></span> <span class="id">mainPage</span><span class="pn">.</span><span class="id">HandleMessage</span> <span class="id">title</span> <span class="id">body</span> <span class="c">// We need to define this method</span>
+    <span class="pn">|</span> <span class="id">InBackground</span> <span class="k">-></span> 
         <span class="k">let</span> <span class="id">notifHandler</span> <span class="o">=</span> <span class="id">NotificationHandler</span><span class="pn">(</span><span class="id">this</span><span class="pn">)</span>
         <span class="id">notifHandler</span><span class="pn">.</span><span class="id">ShowNotification</span> <span class="id">title</span> <span class="id">body</span>
 </code></pre>
@@ -1105,157 +1167,51 @@ If you're using .NET, the library and setup details are here: <a href="https://f
 </tr>
 </tbody>
 </table>
-<p>Sadly we need all these items, as the activity may not exist (which holds the reference to Forms). The state tracking in Xamarin.Forms is the simplest way to know if the activity has is still alive in the background. If desired the state could be handled via <code>MainActivity</code> and Android's lifecycle methods. They have a tricky flow through, with <code>OnPause</code> vs <code>OnStart</code> etc I prefer to leverage Forms.</p>
-<h2>Migration from GCM</h2>
-<p>If you haven't migrated from the GCM yet (it's being turned off very soon), there are TWO things you need to do differently to this post.</p>
-<ul>
-<li>When creating the firebase project, the name must come from the existing GCM project. This will mean the projectIDs remain the same.</li>
-<li>Change the backend URL to the one with FCM in it.</li>
-</ul>
-<p>The firebase project should be created first. Everything else is backwards compatible. Though it's generally best to upgrade the app before server.</p>
-<h2>Final Details</h2>
-<p>If you made it this far and found post the helpful, leave a comment, or share this post so it can help others.</p>
-<p>Links:<br />
-<a href="https://gist.github.com/willsam100/d4775b42a09394fed25069ca18cfcd49">Gist core circular dependant classes</a><br />
-<a href="https://github.com/willsam100/PushyFcm">Full Repo</a></p>
-<p>Related Links:<br />
-App<br />
-<a href="https://docs.microsoft.com/en-us/xamarin/android/data-cloud/google-messaging/&#10;https://developers.google.com/cloud-messaging/android/android-migrate-fcm#update-server-endpoints&#10;https://firebase.google.com/docs/cloud-messaging/android/receive">https://docs.microsoft.com/en-us/xamarin/android/data-cloud/google-messaging/<br />
-https://developers.google.com/cloud-messaging/android/android-migrate-fcm#update-server-endpoints<br />
-https://firebase.google.com/docs/cloud-messaging/android/receive</a></p>
-<p><a href="https://github.com/MicrosoftDocs/azure-docs/issues/14606&#10;https://medium.freecodecamp.org/why-your-push-notifications-never-see-the-light-of-day-3fa297520793&#10;https://github.com/firebase/quickstart-android/issues/41&#10;https://github.com/invertase/react-native-firebase/issues/1238#issuecomment-410422872&#10;https://onesignal.com/blog/manufacturers-interfere-with-reliable-notifications/">https://github.com/MicrosoftDocs/azure-docs/issues/14606<br />
-https://medium.freecodecamp.org/why-your-push-notifications-never-see-the-light-of-day-3fa297520793<br />
-https://github.com/firebase/quickstart-android/issues/41<br />
-https://github.com/invertase/react-native-firebase/issues/1238#issuecomment-410422872<br />
-https://onesignal.com/blog/manufacturers-interfere-with-reliable-notifications/</a></p>
-<p>Backend<br />
-<a href="https://firebase.google.com/docs/cloud-messaging/server&#10;https://firebase.google.com/docs/cloud-messaging/migrate-v1&#10;https://firebase.google.com/docs/cloud-messaging/auth-server&#10;https://firebase.google.com/docs/cloud-messaging/http-server-ref&#10;https://firebase.google.com/docs/admin/setup">https://firebase.google.com/docs/cloud-messaging/server<br />
-https://firebase.google.com/docs/cloud-messaging/migrate-v1<br />
-https://firebase.google.com/docs/cloud-messaging/auth-server<br />
-https://firebase.google.com/docs/cloud-messaging/http-server-ref<br />
-https://firebase.google.com/docs/admin/setup</a></p>
-<div class="tip" id="fs1">type GooglePlayServicesAvailable =<br />
-&nbsp;&nbsp;| HasGooglePlayServices<br />
-&nbsp;&nbsp;| RequiresUser of string<br />
-&nbsp;&nbsp;| NoGooglePlayServices</p>
-<p>Full name: Xamarinandroidpushnotificationsfirebase.GooglePlayServicesAvailable</p>
-</div>
-<div class="tip" id="fs2">union case GooglePlayServicesAvailable.HasGooglePlayServices: GooglePlayServicesAvailable</div>
-<div class="tip" id="fs3">union case GooglePlayServicesAvailable.RequiresUser: string -&gt; GooglePlayServicesAvailable</div>
-<div class="tip" id="fs4">Multiple items<br />
-val string : value:'T -&gt; string</p>
-<p>Full name: Microsoft.FSharp.Core.Operators.string</p>
-<p>--------------------<br />
-type string = System.String</p>
-<p>Full name: Microsoft.FSharp.Core.string</p>
-</div>
-<div class="tip" id="fs5">union case GooglePlayServicesAvailable.NoGooglePlayServices: GooglePlayServicesAvailable</div>
-<div class="tip" id="fs6">val isPlayServicesAvailable : unit -&gt; GooglePlayServicesAvailable</p>
-<p>Full name: Xamarinandroidpushnotificationsfirebase.isPlayServicesAvailable</p>
-</div>
-<div class="tip" id="fs7">val resultCode : obj</div>
-<div class="tip" id="fs8">val typeof&lt;'T&gt; : System.Type</p>
-<p>Full name: Microsoft.FSharp.Core.Operators.typeof</p>
-</div>
-<div class="tip" id="fs9">val sprintf : format:Printf.StringFormat&lt;'T&gt; -&gt; 'T</p>
-<p>Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.sprintf</p>
-</div>
-<div class="tip" id="fs10">namespace System</div>
-<div class="tip" id="fs11">namespace System.Collections</div>
-<div class="tip" id="fs12">namespace System.Collections.Generic</div>
-<div class="tip" id="fs13">type IDictionary&lt;'TKey,'TValue&gt; =<br />
-&nbsp;&nbsp;inherit ICollection&lt;KeyValuePair&lt;'TKey, 'TValue&gt;&gt;<br />
-&nbsp;&nbsp;inherit IEnumerable&lt;KeyValuePair&lt;'TKey, 'TValue&gt;&gt;<br />
-&nbsp;&nbsp;inherit IEnumerable<br />
-&nbsp;&nbsp;member Add : key:'TKey * value:'TValue -&gt; unit<br />
-&nbsp;&nbsp;member ContainsKey : key:'TKey -&gt; bool<br />
-&nbsp;&nbsp;member Item : 'TKey -&gt; 'TValue with get, set<br />
-&nbsp;&nbsp;member Keys : ICollection&lt;'TKey&gt;<br />
-&nbsp;&nbsp;member Remove : key:'TKey -&gt; bool<br />
-&nbsp;&nbsp;member TryGetValue : key:'TKey * value:'TValue -&gt; bool<br />
-&nbsp;&nbsp;member Values : ICollection&lt;'TValue&gt;</p>
-<p>Full name: System.Collections.Generic.IDictionary&lt;_,_&gt;</p>
-</div>
-<div class="tip" id="fs14">module Seq</p>
-<p>from Microsoft.FSharp.Collections</p>
-</div>
-<div class="tip" id="fs15">val map : mapping:('T -&gt; 'U) -&gt; source:seq&lt;'T&gt; -&gt; seq&lt;'U&gt;</p>
-<p>Full name: Microsoft.FSharp.Collections.Seq.map</p>
-</div>
-<div class="tip" id="fs16">active recognizer KeyValue: System.Collections.Generic.KeyValuePair&lt;'Key,'Value&gt; -&gt; 'Key * 'Value</p>
-<p>Full name: Microsoft.FSharp.Core.Operators.( |KeyValue| )</p>
-</div>
-<div class="tip" id="fs17">Multiple items<br />
-module Map</p>
-<p>from Microsoft.FSharp.Collections</p>
-<p>--------------------<br />
-type Map&lt;'Key,'Value (requires comparison)&gt; =<br />
-&nbsp;&nbsp;interface IEnumerable<br />
-&nbsp;&nbsp;interface IComparable<br />
-&nbsp;&nbsp;interface IEnumerable&lt;KeyValuePair&lt;'Key,'Value&gt;&gt;<br />
-&nbsp;&nbsp;interface ICollection&lt;KeyValuePair&lt;'Key,'Value&gt;&gt;<br />
-&nbsp;&nbsp;interface IDictionary&lt;'Key,'Value&gt;<br />
-&nbsp;&nbsp;new : elements:seq&lt;'Key * 'Value&gt; -&gt; Map&lt;'Key,'Value&gt;<br />
-&nbsp;&nbsp;member Add : key:'Key * value:'Value -&gt; Map&lt;'Key,'Value&gt;<br />
-&nbsp;&nbsp;member ContainsKey : key:'Key -&gt; bool<br />
-&nbsp;&nbsp;override Equals : obj -&gt; bool<br />
-&nbsp;&nbsp;member Remove : key:'Key -&gt; Map&lt;'Key,'Value&gt;<br />
-&nbsp;&nbsp;...</p>
-<p>Full name: Microsoft.FSharp.Collections.Map&lt;_,_&gt;</p>
-<p>--------------------<br />
-new : elements:seq&lt;'Key * 'Value&gt; -&gt; Map&lt;'Key,'Value&gt;</p>
-</div>
-<div class="tip" id="fs18">val ofSeq : elements:seq&lt;'Key * 'T&gt; -&gt; Map&lt;'Key,'T&gt; (requires comparison)</p>
-<p>Full name: Microsoft.FSharp.Collections.Map.ofSeq</p>
-</div>
-<div class="tip" id="fs19">val iter : action:('Key -&gt; 'T -&gt; unit) -&gt; table:Map&lt;'Key,'T&gt; -&gt; unit (requires comparison)</p>
-<p>Full name: Microsoft.FSharp.Collections.Map.iter</p>
-</div>
-<div class="tip" id="fs20">namespace Microsoft.FSharp.Data</div>
-<div class="tip" id="fs21">val dict : keyValuePairs:seq&lt;'Key * 'Value&gt; -&gt; System.Collections.Generic.IDictionary&lt;'Key,'Value&gt; (requires equality)</p>
-<p>Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.dict</p>
-</div>
-<div class="tip" id="fs22">Multiple items<br />
-type Async =<br />
-&nbsp;&nbsp;static member AsBeginEnd : computation:('Arg -&gt; Async&lt;'T&gt;) -&gt; ('Arg * AsyncCallback * obj -&gt; IAsyncResult) * (IAsyncResult -&gt; 'T) * (IAsyncResult -&gt; unit)<br />
-&nbsp;&nbsp;static member AwaitEvent : event:IEvent&lt;'Del,'T&gt; * ?cancelAction:(unit -&gt; unit) -&gt; Async&lt;'T&gt; (requires delegate and 'Del :&gt; Delegate)<br />
-&nbsp;&nbsp;static member AwaitIAsyncResult : iar:IAsyncResult * ?millisecondsTimeout:int -&gt; Async&lt;bool&gt;<br />
-&nbsp;&nbsp;static member AwaitTask : task:Task -&gt; Async&lt;unit&gt;<br />
-&nbsp;&nbsp;static member AwaitTask : task:Task&lt;'T&gt; -&gt; Async&lt;'T&gt;<br />
-&nbsp;&nbsp;static member AwaitWaitHandle : waitHandle:WaitHandle * ?millisecondsTimeout:int -&gt; Async&lt;bool&gt;<br />
-&nbsp;&nbsp;static member CancelDefaultToken : unit -&gt; unit<br />
-&nbsp;&nbsp;static member Catch : computation:Async&lt;'T&gt; -&gt; Async&lt;Choice&lt;'T,exn&gt;&gt;<br />
-&nbsp;&nbsp;static member Choice : computations:seq&lt;Async&lt;'T option&gt;&gt; -&gt; Async&lt;'T option&gt;<br />
-&nbsp;&nbsp;static member FromBeginEnd : beginAction:(AsyncCallback * obj -&gt; IAsyncResult) * endAction:(IAsyncResult -&gt; 'T) * ?cancelAction:(unit -&gt; unit) -&gt; Async&lt;'T&gt;<br />
-&nbsp;&nbsp;...</p>
-<p>Full name: Microsoft.FSharp.Control.Async</p>
-<p>--------------------<br />
-type Async&lt;'T&gt; =</p>
-<p>Full name: Microsoft.FSharp.Control.Async&lt;_&gt;</p>
-</div>
-<div class="tip" id="fs23">static member Async.AwaitTask : task:System.Threading.Tasks.Task -&gt; Async&lt;unit&gt;<br />
-static member Async.AwaitTask : task:System.Threading.Tasks.Task&lt;'T&gt; -&gt; Async&lt;'T&gt;</div>
-<div class="tip" id="fs24">static member Async.RunSynchronously : computation:Async&lt;'T&gt; * ?timeout:int * ?cancellationToken:System.Threading.CancellationToken -&gt; 'T</div>
-<div class="tip" id="fs25">val printfn : format:Printf.TextWriterFormat&lt;'T&gt; -&gt; 'T</p>
-<p>Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</p>
-</div>
-<div class="tip" id="fs26">type 'T option = Option&lt;'T&gt;</p>
-<p>Full name: Microsoft.FSharp.Core.option&lt;_&gt;</p>
-</div>
-<div class="tip" id="fs27">union case Option.None: Option&lt;'T&gt;</div>
-<div class="tip" id="fs28">module Option</p>
-<p>from Microsoft.FSharp.Core</p>
-</div>
-<div class="tip" id="fs29">val map : mapping:('T -&gt; 'U) -&gt; option:'T option -&gt; 'U option</p>
-<p>Full name: Microsoft.FSharp.Core.Option.map</p>
-</div>
-<div class="tip" id="fs30">union case Option.Some: Value: 'T -&gt; Option&lt;'T&gt;</div>
-<div class="tip" id="fs31">type unit = Unit</p>
-<p>Full name: Microsoft.FSharp.Core.unit</p>
-</div>
-<div class="tip" id="fs32">type bool = System.Boolean</p>
-<p>Full name: Microsoft.FSharp.Core.bool</p>
-</div>
-<div class="tip" id="fs33">val set : elements:seq&lt;'T&gt; -&gt; Set&lt;'T&gt; (requires comparison)</p>
-<p>Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.set</p>
-</div>
+Sadly we need all these items, as the activity may not exist (which holds the reference to Forms). The state tracking in Xamarin.Forms is the simplest way to know if the activity has is still alive in the background. If desired the state could be handled via <code>MainActivity</code> and Android's lifecycle methods. They have a tricky flow through, with <code>OnPause</code> vs <code>OnStart</code> etc I prefer to leverage Forms.
+
+## Migration from GCM
+If you haven't migrated from the GCM yet (it's being turned off very soon), there are TWO things you need to do differently to this post.
+
+- When creating the firebase project, the name must come from the existing GCM project. This will mean the projectIDs remain the same.
+- Change the backend URL to the one with FCM in it.
+
+The firebase project should be created first. Everything else is backwards compatible. Though it's generally best to upgrade the app before server.
+
+## Final Details
+If you made it this far and found post the helpful, leave a comment, or share this post so it can help others.
+Links:
+
+<a href="https://gist.github.com/willsam100/d4775b42a09394fed25069ca18cfcd49">Gist core circular dependant classes</a>
+
+<a href="https://github.com/willsam100/PushyFcm">Full Repo</a>
+Related Links:
+
+App
+
+<a href="https://docs.microsoft.com/en-us/xamarin/android/data-cloud/google-messaging/&#10;https://developers.google.com/cloud-messaging/android/android-migrate-fcm#update-server-endpoints&#10;https://firebase.google.com/docs/cloud-messaging/android/receive">https://docs.microsoft.com/en-us/xamarin/android/data-cloud/google-messaging/
+
+[https://developers.google.com/cloud-messaging/android/android-migrate-fcm#update-server-endpoints](https://developers.google.com/cloud-messaging/android/android-migrate-fcm#update-server-endpoints)
+
+[https://firebase.google.com/docs/cloud-messaging/android/receive](https://firebase.google.com/docs/cloud-messaging/android/receive)
+<a href="https://github.com/MicrosoftDocs/azure-docs/issues/14606&#10;https://medium.freecodecamp.org/why-your-push-notifications-never-see-the-light-of-day-3fa297520793&#10;https://github.com/firebase/quickstart-android/issues/41&#10;https://github.com/invertase/react-native-firebase/issues/1238#issuecomment-410422872&#10;https://onesignal.com/blog/manufacturers-interfere-with-reliable-notifications/">https://github.com/MicrosoftDocs/azure-docs/issues/14606
+
+[https://medium.freecodecamp.org/why-your-push-notifications-never-see-the-light-of-day-3fa297520793](https://medium.freecodecamp.org/why-your-push-notifications-never-see-the-light-of-day-3fa297520793)
+
+[https://github.com/firebase/quickstart-android/issues/41](https://github.com/firebase/quickstart-android/issues/41)
+
+[https://github.com/invertase/react-native-firebase/issues/1238#issuecomment-410422872](https://github.com/invertase/react-native-firebase/issues/1238#issuecomment-410422872)
+
+[https://onesignal.com/blog/manufacturers-interfere-with-reliable-notifications/](https://onesignal.com/blog/manufacturers-interfere-with-reliable-notifications/)
+
+
+**Backend**
+
+<a href="https://firebase.google.com/docs/cloud-messaging/server&#10;https://firebase.google.com/docs/cloud-messaging/migrate-v1&#10;https://firebase.google.com/docs/cloud-messaging/auth-server&#10;https://firebase.google.com/docs/cloud-messaging/http-server-ref&#10;https://firebase.google.com/docs/admin/setup">https://firebase.google.com/docs/cloud-messaging/server
+
+[https://firebase.google.com/docs/cloud-messaging/migrate-v1](https://firebase.google.com/docs/cloud-messaging/migrate-v1)
+
+[https://firebase.google.com/docs/cloud-messaging/auth-server](https://firebase.google.com/docs/cloud-messaging/auth-server)
+
+[https://firebase.google.com/docs/cloud-messaging/http-server-ref](https://firebase.google.com/docs/cloud-messaging/http-server-ref)
+
+[https://firebase.google.com/docs/admin/setup](https://firebase.google.com/docs/admin/setup)

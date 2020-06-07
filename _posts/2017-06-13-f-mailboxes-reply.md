@@ -34,16 +34,18 @@ author:
   last_name: Williams
 permalink: "/2017/06/13/f-mailboxes-reply/"
 ---
-<p><strong>Prerequisites</strong></p>
-<ul>
-<li>A simple understanding of F#</li>
-<li>A recap of F# Mailboxes: <a href="https://fsharpforfunandprofit.com/posts/concurrency-actor-model/">https://fsharpforfunandprofit.com/posts/concurrency-actor-model/</a></li>
-<li>A basic understanding of an SQLite database</li>
-</ul>
-<p>This post aims to build on the discussion started in the prerequisites. Mailbox processors are a great alternative to use variables and locks. There are many blog other posts on MailboxProcessors, however, few of them mention how to retrieve the state they hold rather than just printing it to console. This post will explain the different approaches while applying this to a typical Xamarin app problem; a database connection. Understanding how to use the F# mailbox reply methods will be easy after reading this post!</p>
-<p><strong>Background</strong></p>
-<p>Before jumping in to the details, it is important to establish why this is important. State is a requirement of a program, but how that state is modelled is up to the programmer. Most main-stream programming languages (those OOP ones) model state with many variables. An alternative approach (and better in my opinion) is to eliminate most of the variables by modelling state through functions (how that is done is not the focus of this post). For those few variables that remain, a high quality can now taken to make sure everything is thread safe and protected. F# mailboxes are a nice way of doing that. As already stated, one of those variables is the database connection. With that out of the way, time for some code!</p>
-<p><strong>A database connection: The standard approach</strong></p>
+
+## Prerequisites
+- A simple understanding of F#
+- A recap of F# Mailboxes: <a href="https://fsharpforfunandprofit.com/posts/concurrency-actor-model/">https://fsharpforfunandprofit.com/posts/concurrency-actor-model/</a>
+- A basic understanding of an SQLite database
+
+This post aims to build on the discussion started in the prerequisites. Mailbox processors are a great alternative to use variables and locks. There are many blog other posts on MailboxProcessors, however, few of them mention how to retrieve the state they hold rather than just printing it to console. This post will explain the different approaches while applying this to a typical Xamarin app problem; a database connection. Understanding how to use the F# mailbox reply methods will be easy after reading this post!
+
+## Background
+Before jumping in to the details, it is important to establish why this is important. State is a requirement of a program, but how that state is modelled is up to the programmer. Most main-stream programming languages (those OOP ones) model state with many variables. An alternative approach (and better in my opinion) is to eliminate most of the variables by modelling state through functions (how that is done is not the focus of this post). For those few variables that remain, a high quality can now taken to make sure everything is thread safe and protected. F# mailboxes are a nice way of doing that. As already stated, one of those variables is the database connection. With that out of the way, time for some code!
+
+## A database connection: The standard approach
 <table class="pre">
 <tbody>
 <tr>
@@ -112,9 +114,10 @@ permalink: "/2017/06/13/f-mailboxes-reply/"
 </tr>
 </tbody>
 </table>
-<p>As a starting point, this F# code is a very typical approach to creating a database connection that is thread safe. To explain the main points of the code, UserName is the DTO class that we're using for a single table. For the connection, a synchronous connection is being used. Normally an async connection is used, but in the context of this post, an async connection offers little benefits. I've also skipped any form of interfaces for testing and will leave adding that in as an exercise for the reader.</p>
-<p><strong> Step one: A mailbox</strong></p>
-<p>First, let's take out the lock and wrap the connection in a mailbox.</p>
+As a starting point, this F# code is a very typical approach to creating a database connection that is thread safe. To explain the main points of the code, UserName is the DTO class that we're using for a single table. For the connection, a synchronous connection is being used. Normally an async connection is used, but in the context of this post, an async connection offers little benefits. I've also skipped any form of interfaces for testing and will leave adding that in as an exercise for the reader.
+
+##  Step one: A mailbox
+First, let's take out the lock and wrap the connection in a mailbox.
 <table class="pre">
 <tbody>
 <tr>
@@ -195,14 +198,17 @@ permalink: "/2017/06/13/f-mailboxes-reply/"
 </tr>
 </tbody>
 </table>
-<p>Now we have a <code>MailboxProcessor</code> holding our <code>SQLiteConnection</code> and we also have a message type to create the connection. Because the connection is stored inside the mailbox, we know that things are thread safe. We're not finished yet though since there is no way to get data out of the <code>MailboxProcessor</code></p>
-<p><strong>Getting data out: The many possibilities</strong></p>
-<p>There are a few ways to get data out of the mailbox. They are:<br />
-- Reply synchronously<br />
-- Reply asynchronous<br />
-- use events</p>
-<p>let's use each approach to get a feel for what works best. Here are the code sections that need to be added/updated for replying synchronously:</p>
-<p><strong>Reply to me synchronously</strong></p>
+Now we have a <code>MailboxProcessor</code> holding our <code>SQLiteConnection</code> and we also have a message type to create the connection. Because the connection is stored inside the mailbox, we know that things are thread safe. We're not finished yet though since there is no way to get data out of the <code>MailboxProcessor</code>
+
+## Getting data out: The many possibilities
+There are a few ways to get data out of the mailbox. They are:
+- Reply synchronously
+- Reply asynchronous
+- use events
+
+let's use each approach to get a feel for what works best. Here are the code sections that need to be added/updated for replying synchronously:
+
+## Reply to me synchronously
 <table class="pre">
 <tbody>
 <tr>
@@ -243,8 +249,9 @@ permalink: "/2017/06/13/f-mailboxes-reply/"
 </tr>
 </tbody>
 </table>
-<p><code>Message</code> now includes a branch with <code>GetUserNames</code> that also carries some data with it; the reply channel. The reply channel is also typed with the response data, in this case <code>seq&lt;UserName&gt;</code>. Once the message type has been updated, the pattern match inside the mailbox will give a warning till it has been updated to handle the <code>GetUserNames</code> case. The matching case is very simple. Just use the connection to pull out the data and pass it into the replyChannel's reply method. The last section of code is added to <code>DatabaseManager</code> as a public method. In here, we specify that the request should be made synchronously, ie post the message and block on the same thread for the response.<br />
-Here is the full output:</p>
+<code>Message</code> now includes a branch with <code>GetUserNames</code> that also carries some data with it; the reply channel. The reply channel is also typed with the response data, in this case <code>seq&lt;UserName&gt;</code>. Once the message type has been updated, the pattern match inside the mailbox will give a warning till it has been updated to handle the <code>GetUserNames</code> case. The matching case is very simple. Just use the connection to pull out the data and pass it into the replyChannel's reply method. The last section of code is added to <code>DatabaseManager</code> as a public method. In here, we specify that the request should be made synchronously, ie post the message and block on the same thread for the response.
+
+Here is the full output:
 <table class="pre">
 <tbody>
 <tr>
@@ -337,8 +344,9 @@ Here is the full output:</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Doing things asynchronously</strong></p>
-<p>For the next variation, we have to reply asynchronously. To change the synchronous example to asynchronously, only one method needs to changed:</p>
+
+## Doing things asynchronously
+For the next variation, we have to reply asynchronously. To change the synchronous example to asynchronously, only one method needs to changed:
 <table class="pre">
 <tbody>
 <tr>
@@ -359,9 +367,10 @@ Here is the full output:</p>
 </tr>
 </tbody>
 </table>
-<p>As stated, the change is very simple, just use <code>PostAndAsyncReply</code>, and the response will be asynchronous. For the example invoking the method, I have called it synchronously (<code>RunSynchronously</code>), but this should be avoided to get the benefits from asynchronous execution.</p>
-<p><strong>An event to rule them all</strong></p>
-<p>The final choice for getting data out of a <code>MailboxProcessor</code> is by using events. Don Syme wrote a great a post on this <a title="https://blogs.msdn.microsoft.com/dsyme/2010/02/15/async-and-parallel-design-patterns-in-f-agents/">here</a>. Let's apply that solution to the <code>SQLiteConnection</code>. First off let's update the <code>Message</code> to have the values we need.</p>
+As stated, the change is very simple, just use <code>PostAndAsyncReply</code>, and the response will be asynchronous. For the example invoking the method, I have called it synchronously (<code>RunSynchronously</code>), but this should be avoided to get the benefits from asynchronous execution.
+
+## An event to rule them all
+The final choice for getting data out of a <code>MailboxProcessor</code> is by using events. Don Syme wrote a great a post on this <a title="https://blogs.msdn.microsoft.com/dsyme/2010/02/15/async-and-parallel-design-patterns-in-f-agents/">here</a>. Let's apply that solution to the <code>SQLiteConnection</code>. First off let's update the <code>Message</code> to have the values we need.
 <table class="pre">
 <tbody>
 <tr>
@@ -376,7 +385,7 @@ Here is the full output:</p>
 </tr>
 </tbody>
 </table>
-<p>The <code>GetUserNames</code> is now used as an enum since we'll use an event to return the data. I've also taken the liberty of adding another choice to the message that will allow a <code>UserName</code> to be added to the database. This choice can be added to any/all of the examples if you want to test them with some data. Now we need to add the event along with a few helper methods to the <code>DatabaseManager</code></p>
+The <code>GetUserNames</code> is now used as an enum since we'll use an event to return the data. I've also taken the liberty of adding another choice to the message that will allow a <code>UserName</code> to be added to the database. This choice can be added to any/all of the examples if you want to test them with some data. Now we need to add the event along with a few helper methods to the <code>DatabaseManager</code>
 <table class="pre">
 <tbody>
 <tr>
@@ -407,7 +416,7 @@ Here is the full output:</p>
 </tr>
 </tbody>
 </table>
-<p>As discussed earlier, the event is typed with our return type, in this case <code>seq&lt;UserName&gt;</code>. We also capture a context that we can post back on, generally this will be the main thread of a GUI app. Finally, a helper <code>raiseEvent</code> was added that raises the event on the captured context. Next up is to update the match block in our mailbox:</p>
+As discussed earlier, the event is typed with our return type, in this case <code>seq&lt;UserName&gt;</code>. We also capture a context that we can post back on, generally this will be the main thread of a GUI app. Finally, a helper <code>raiseEvent</code> was added that raises the event on the captured context. Next up is to update the match block in our mailbox:
 <table class="pre">
 <tbody>
 <tr>
@@ -438,7 +447,7 @@ Here is the full output:</p>
 </tr>
 </tbody>
 </table>
-<p>The first match is the same as before. <code>GetUserNames</code> now loads all the data and calls the helper method we declared earlier. <code>Create</code> is also very simple, it inserts the userName into the database and ignores the return value of the insert. We're nearly done, we just need to expose the new functionality on the <code>DatabaseManager</code> via some methods.</p>
+The first match is the same as before. <code>GetUserNames</code> now loads all the data and calls the helper method we declared earlier. <code>Create</code> is also very simple, it inserts the userName into the database and ignores the return value of the insert. We're nearly done, we just need to expose the new functionality on the <code>DatabaseManager</code> via some methods.
 <table class="pre">
 <tbody>
 <tr>
@@ -469,8 +478,8 @@ Here is the full output:</p>
 </tr>
 </tbody>
 </table>
-<p>Adding data is a single method that takes in the required. It simply makes a <code>Post</code> call to the mailbox with the <code>Create</code> tag and the data. Getting the data our now requires two methods. Because we're using events to get the data out, the client will need to subscribe to the event. <code>ReceiveAllUsers</code> allows the client to do this by exposing the <code>Publish</code> method on the event. Once the client has subscribed, the client can call <code>RequestAllUsers</code> and the data will be received on the event subscription. <code>RequestAllUsers</code> just makes a <code>Post</code> call to the mailbox with the <code>GetUserNames</code> choice.</p>
-<p>Here is some sample client code I used in an F# repl to test this out:</p>
+Adding data is a single method that takes in the required. It simply makes a <code>Post</code> call to the mailbox with the <code>Create</code> tag and the data. Getting the data our now requires two methods. Because we're using events to get the data out, the client will need to subscribe to the event. <code>ReceiveAllUsers</code> allows the client to do this by exposing the <code>Publish</code> method on the event. Once the client has subscribed, the client can call <code>RequestAllUsers</code> and the data will be received on the event subscription. <code>RequestAllUsers</code> just makes a <code>Post</code> call to the mailbox with the <code>GetUserNames</code> choice.
+Here is some sample client code I used in an F# repl to test this out:
 <table class="pre">
 <tbody>
 <tr>
@@ -495,10 +504,12 @@ Here is the full output:</p>
 </tr>
 </tbody>
 </table>
-<p>It's rather straight forward but I will go over it quickly. The first three lines are creating an instance and setting up the database as before. We then create a record so we can get something out. We then add our subscription to the <code>databaseManager</code> event. For this trivial example, the users will be printed to the console. Finally, the request is made to get all the users. The full listing for the mailbox with events is listed at the end of the post.</p>
-<p>To wrap-up, there are three possible methods to get state out of an F# mailbox, reply synchronously, reply asynchronous and via events. Hopefully one of these will be suitable the next time you need to protect a variable from thread bugs.</p>
-<p><strong>tl;dr: full fsx script example with events</strong></p>
-<p>Here is the full listing for the mailbox with events. I've included the required imports to run this as an fsx script on a Mac. For this script I've also included some very crude error handling, useful for getting the script running (but not production quality):</p>
+It's rather straight forward but I will go over it quickly. The first three lines are creating an instance and setting up the database as before. We then create a record so we can get something out. We then add our subscription to the <code>databaseManager</code> event. For this trivial example, the users will be printed to the console. Finally, the request is made to get all the users. The full listing for the mailbox with events is listed at the end of the post.
+
+To wrap-up, there are three possible methods to get state out of an F# mailbox, reply synchronously, reply asynchronous and via events. Hopefully one of these will be suitable the next time you need to protect a variable from thread bugs.
+
+## tl;dr: full fsx script example with events
+Here is the full listing for the mailbox with events. I've included the required imports to run this as an fsx script on a Mac. For this script I've also included some very crude error handling, useful for getting the script running (but not production quality):
 <table class="pre">
 <tbody>
 <tr>
@@ -683,225 +694,3 @@ Here is the full output:</p>
 </tr>
 </tbody>
 </table>
-<div id="fs1" class="tip">namespace System</div>
-<div id="fs2" class="tip">namespace System.IO</div>
-<div id="fs3" class="tip">
-<p>Multiple items<br />
-type CLIMutableAttribute =<br />
-inherit Attribute<br />
-new : unit -&gt; CLIMutableAttribute</p>
-<p>Full name: Microsoft.FSharp.Core.CLIMutableAttribute</p>
-<p>--------------------<br />
-new : unit -&gt; CLIMutableAttribute</p>
-</div>
-<div id="fs4" class="tip">
-<p>type UserName =<br />
-{Id: Guid;<br />
-FirstName: string;<br />
-LastName: string;}</p>
-<p>Full name: Mailbox.UserName</p>
-</div>
-<div id="fs5" class="tip">UserName.Id: Guid</div>
-<div id="fs6" class="tip">
-<p>Multiple items<br />
-type Guid =<br />
-struct<br />
-new : b:byte[] -&gt; Guid + 4 overloads<br />
-member CompareTo : value:obj -&gt; int + 1 overload<br />
-member Equals : o:obj -&gt; bool + 1 overload<br />
-member GetHashCode : unit -&gt; int<br />
-member ToByteArray : unit -&gt; byte[]<br />
-member ToString : unit -&gt; string + 2 overloads<br />
-static val Empty : Guid<br />
-static member NewGuid : unit -&gt; Guid<br />
-static member Parse : input:string -&gt; Guid<br />
-static member ParseExact : input:string * format:string -&gt; Guid<br />
-...<br />
-end</p>
-<p>Full name: System.Guid</p>
-<p>--------------------<br />
-Guid ()<br />
-Guid(b: byte []) : unit<br />
-Guid(g: string) : unit<br />
-Guid(a: int, b: int16, c: int16, d: byte []) : unit<br />
-Guid(a: uint32, b: uint16, c: uint16, d: byte, e: byte, f: byte, g: byte, h: byte, i: byte, j: byte, k: byte) : unit<br />
-Guid(a: int, b: int16, c: int16, d: byte, e: byte, f: byte, g: byte, h: byte, i: byte, j: byte, k: byte) : unit</p>
-</div>
-<div id="fs7" class="tip">UserName.FirstName: string</div>
-<div id="fs8" class="tip">
-<p>Multiple items<br />
-val string : value:'T -&gt; string</p>
-<p>Full name: Microsoft.FSharp.Core.Operators.string</p>
-<p>--------------------<br />
-type string = String</p>
-<p>Full name: Microsoft.FSharp.Core.string</p>
-</div>
-<div id="fs9" class="tip">UserName.LastName: string</div>
-<div id="fs10" class="tip">
-<p>Multiple items<br />
-type DatabaseManager =<br />
-new : unit -&gt; DatabaseManager<br />
-member GetAllUsers : unit -&gt; 'a<br />
-member Init : unit -&gt; unit</p>
-<p>Full name: Mailbox.DatabaseManager</p>
-<p>--------------------<br />
-new : unit -&gt; DatabaseManager</p>
-</div>
-<div id="fs11" class="tip">val monitor : Object</div>
-<div id="fs12" class="tip">
-<p>Multiple items<br />
-type Object =<br />
-new : unit -&gt; obj<br />
-member Equals : obj:obj -&gt; bool<br />
-member GetHashCode : unit -&gt; int<br />
-member GetType : unit -&gt; Type<br />
-member ToString : unit -&gt; string<br />
-static member Equals : objA:obj * objB:obj -&gt; bool<br />
-static member ReferenceEquals : objA:obj * objB:obj -&gt; bool</p>
-<p>Full name: System.Object</p>
-<p>--------------------<br />
-Object() : unit</p>
-</div>
-<div id="fs13" class="tip">val dbName : string</div>
-<div id="fs14" class="tip">val mutable connection : obj</div>
-<div id="fs15" class="tip">val this : DatabaseManager</div>
-<div id="fs16" class="tip">
-<p>val lock : lockObject:'Lock -&gt; action:(unit -&gt; 'T) -&gt; 'T (requires reference type)</p>
-<p>Full name: Microsoft.FSharp.Core.Operators.lock</p>
-</div>
-<div id="fs17" class="tip">
-<p>type Path =<br />
-static val InvalidPathChars : char[]<br />
-static val AltDirectorySeparatorChar : char<br />
-static val DirectorySeparatorChar : char<br />
-static val PathSeparator : char<br />
-static val VolumeSeparatorChar : char<br />
-static member ChangeExtension : path:string * extension:string -&gt; string<br />
-static member Combine : [&lt;ParamArray&gt;] paths:string[] -&gt; string + 3 overloads<br />
-static member GetDirectoryName : path:string -&gt; string<br />
-static member GetExtension : path:string -&gt; string<br />
-static member GetFileName : path:string -&gt; string<br />
-...</p>
-<p>Full name: System.IO.Path</p>
-</div>
-<div id="fs18" class="tip">Path.Combine([&lt;ParamArray&gt;] paths: string []) : string<br />
-Path.Combine(path1: string, path2: string) : string<br />
-Path.Combine(path1: string, path2: string, path3: string) : string<br />
-Path.Combine(path1: string, path2: string, path3: string, path4: string) : string</div>
-<div id="fs19" class="tip">
-<p>val ignore : value:'T -&gt; unit</p>
-<p>Full name: Microsoft.FSharp.Core.Operators.ignore</p>
-</div>
-<div id="fs20" class="tip">
-<p>module Seq</p>
-<p>from Microsoft.FSharp.Collections</p>
-</div>
-<div id="fs21" class="tip">
-<p>val deviceDatabasePath : string</p>
-<p>Full name: Mailbox.deviceDatabasePath</p>
-</div>
-<div id="fs22" class="tip">
-<p>val databaseManager : DatabaseManager</p>
-<p>Full name: Mailbox.databaseManager</p>
-</div>
-<div id="fs23" class="tip">member DatabaseManager.Init : unit -&gt; unit</div>
-<div id="fs24" class="tip">
-<p>type Message = | Init of string</p>
-<p>Full name: Mailbox.Message</p>
-</div>
-<div id="fs25" class="tip">union case Message.Init: string -&gt; Message</div>
-<div id="fs26" class="tip">
-<p>Multiple items<br />
-type MailboxProcessor&lt;'Msg&gt; =<br />
-interface IDisposable<br />
-new : body:(MailboxProcessor&lt;'Msg&gt; -&gt; Async&lt;unit&gt;) * ?cancellationToken:CancellationToken -&gt; MailboxProcessor&lt;'Msg&gt;<br />
-member Post : message:'Msg -&gt; unit<br />
-member PostAndAsyncReply : buildMessage:(AsyncReplyChannel&lt;'Reply&gt; -&gt; 'Msg) * ?timeout:int -&gt; Async&lt;'Reply&gt;<br />
-member PostAndReply : buildMessage:(AsyncReplyChannel&lt;'Reply&gt; -&gt; 'Msg) * ?timeout:int -&gt; 'Reply<br />
-member PostAndTryAsyncReply : buildMessage:(AsyncReplyChannel&lt;'Reply&gt; -&gt; 'Msg) * ?timeout:int -&gt; Async&lt;'Reply option&gt;<br />
-member Receive : ?timeout:int -&gt; Async&lt;'Msg&gt;<br />
-member Scan : scanner:('Msg -&gt; Async&lt;'T&gt; option) * ?timeout:int -&gt; Async&lt;'T&gt;<br />
-member Start : unit -&gt; unit<br />
-member TryPostAndReply : buildMessage:(AsyncReplyChannel&lt;'Reply&gt; -&gt; 'Msg) * ?timeout:int -&gt; 'Reply option<br />
-...</p>
-<p>Full name: Microsoft.FSharp.Control.MailboxProcessor&lt;_&gt;</p>
-<p>--------------------<br />
-new : body:(MailboxProcessor&lt;'Msg&gt; -&gt; Async&lt;unit&gt;) * ?cancellationToken:Threading.CancellationToken -&gt; MailboxProcessor&lt;'Msg&gt;</p>
-</div>
-<div id="fs27" class="tip">static member MailboxProcessor.Start : body:(MailboxProcessor&lt;'Msg&gt; -&gt; Async&lt;unit&gt;) * ?cancellationToken:Threading.CancellationToken -&gt; MailboxProcessor&lt;'Msg&gt;</div>
-<div id="fs28" class="tip">
-<p>val async : AsyncBuilder</p>
-<p>Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.async</p>
-</div>
-<div id="fs29" class="tip">
-<p>type AsyncReplyChannel&lt;'Reply&gt; =<br />
-member Reply : value:'Reply -&gt; unit</p>
-<p>Full name: Microsoft.FSharp.Control.AsyncReplyChannel&lt;_&gt;</p>
-</div>
-<div id="fs30" class="tip">
-<p>Multiple items<br />
-val seq : sequence:seq&lt;'T&gt; -&gt; seq&lt;'T&gt;</p>
-<p>Full name: Microsoft.FSharp.Core.Operators.seq</p>
-<p>--------------------<br />
-type seq&lt;'T&gt; = Collections.Generic.IEnumerable&lt;'T&gt;</p>
-<p>Full name: Microsoft.FSharp.Collections.seq&lt;_&gt;</p>
-</div>
-<div id="fs31" class="tip">
-<p>Multiple items<br />
-type Async =<br />
-static member AsBeginEnd : computation:('Arg -&gt; Async&lt;'T&gt;) -&gt; ('Arg * AsyncCallback * obj -&gt; IAsyncResult) * (IAsyncResult -&gt; 'T) * (IAsyncResult -&gt; unit)<br />
-static member AwaitEvent : event:IEvent&lt;'Del,'T&gt; * ?cancelAction:(unit -&gt; unit) -&gt; Async&lt;'T&gt; (requires delegate and 'Del :&gt; Delegate)<br />
-static member AwaitIAsyncResult : iar:IAsyncResult * ?millisecondsTimeout:int -&gt; Async&lt;bool&gt;<br />
-static member AwaitTask : task:Task -&gt; Async&lt;unit&gt;<br />
-static member AwaitTask : task:Task&lt;'T&gt; -&gt; Async&lt;'T&gt;<br />
-static member AwaitWaitHandle : waitHandle:WaitHandle * ?millisecondsTimeout:int -&gt; Async&lt;bool&gt;<br />
-static member CancelDefaultToken : unit -&gt; unit<br />
-static member Catch : computation:Async&lt;'T&gt; -&gt; Async&lt;Choice&lt;'T,exn&gt;&gt;<br />
-static member Choice : computations:seq&lt;Async&lt;'T option&gt;&gt; -&gt; Async&lt;'T option&gt;<br />
-static member FromBeginEnd : beginAction:(AsyncCallback * obj -&gt; IAsyncResult) * endAction:(IAsyncResult -&gt; 'T) * ?cancelAction:(unit -&gt; unit) -&gt; Async&lt;'T&gt;<br />
-...</p>
-<p>Full name: Microsoft.FSharp.Control.Async</p>
-<p>--------------------<br />
-type Async&lt;'T&gt; =</p>
-<p>Full name: Microsoft.FSharp.Control.Async&lt;_&gt;</p>
-</div>
-<div id="fs32" class="tip">static member Async.RunSynchronously : computation:Async&lt;'T&gt; * ?timeout:int * ?cancellationToken:Threading.CancellationToken -&gt; 'T</div>
-<div id="fs33" class="tip">
-<p>Multiple items<br />
-module Event</p>
-<p>from Microsoft.FSharp.Control</p>
-<p>--------------------<br />
-type Event&lt;'T&gt; =<br />
-new : unit -&gt; Event&lt;'T&gt;<br />
-member Trigger : arg:'T -&gt; unit<br />
-member Publish : IEvent&lt;'T&gt;</p>
-<p>Full name: Microsoft.FSharp.Control.Event&lt;_&gt;</p>
-<p>--------------------<br />
-type Event&lt;'Delegate,'Args (requires delegate and 'Delegate :&gt; Delegate)&gt; =<br />
-new : unit -&gt; Event&lt;'Delegate,'Args&gt;<br />
-member Trigger : sender:obj * args:'Args -&gt; unit<br />
-member Publish : IEvent&lt;'Delegate,'Args&gt;</p>
-<p>Full name: Microsoft.FSharp.Control.Event&lt;_,_&gt;</p>
-<p>--------------------<br />
-new : unit -&gt; Event&lt;'T&gt;</p>
-<p>--------------------<br />
-new : unit -&gt; Event&lt;'Delegate,'Args&gt;</p>
-</div>
-<div id="fs34" class="tip">Guid.NewGuid() : Guid</div>
-<div id="fs35" class="tip">
-<p>val iter : action:('T -&gt; unit) -&gt; source:seq&lt;'T&gt; -&gt; unit</p>
-<p>Full name: Microsoft.FSharp.Collections.Seq.iter</p>
-</div>
-<div id="fs36" class="tip">
-<p>val printfn : format:Printf.TextWriterFormat&lt;'T&gt; -&gt; 'T</p>
-<p>Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</p>
-</div>
-<div id="fs37" class="tip">namespace System.Threading</div>
-<div id="fs38" class="tip">
-<p>type exn = Exception</p>
-<p>Full name: Microsoft.FSharp.Core.exn</p>
-</div>
-<div id="fs39" class="tip">
-<p>val sprintf : format:Printf.StringFormat&lt;'T&gt; -&gt; 'T</p>
-<p>Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.sprintf</p>
-</div>

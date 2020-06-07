@@ -30,9 +30,11 @@ author:
   last_name: Williams
 permalink: "/2018/02/03/intro-xamarin-forms-f-part-3/"
 ---
-<p>This is the third video in the series on 'Intro to Xamarin Forms with F#'</p>
-<p>The focus of this video is on the <code>Result</code> type in F#. The Result type improves on the Option type by allowing for better error handling and domain modelling of errors.</p>
-<p>Part 1 is here: <a href="http://www.codingwithsam.com/video-intro-xamarin-forms-f/">Xamarin Forms with F# Intro - Part 1</a><br />
-Part 2 is here:<a href="http://www.codingwithsam.com/intro-xamarin-forms-f-part-2/">Xamarin Forms with F# Intro - Part 2</a></p>
-<p><iframe src="https://www.youtube.com/embed/KAFyO8WsicI" width="560" height="315" frameborder="0" allowfullscreen="allowfullscreen"></iframe></p>
-<p>Don't forget to like the video or leave a comment if enjoyed!</p>
+This is the third video in the series on 'Intro to Xamarin Forms with F#'
+The focus of this video is on the <code>Result</code> type in F#. The Result type improves on the Option type by allowing for better error handling and domain modelling of errors.
+
+Part 1 is here: [Xamarin Forms with F# Intro - Part 1]({{ "/2018/01/27/video-intro-xamarin-forms-f/" | relative_url }})
+
+Part 2 is here:[Xamarin Forms with F# Intro - Part 2]({{ "/2018/02/01/intro-xamarin-forms-f-part-2/" | relative_url }})
+<iframe src="https://www.youtube.com/embed/KAFyO8WsicI" width="560" height="315" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
+Don't forget to like the video or leave a comment if enjoyed!

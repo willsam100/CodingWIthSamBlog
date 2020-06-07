@@ -8,7 +8,7 @@ published: true
 password: ''
 status: publish
 categories: [Functional-Programming]
-tags: [csv, F#, fold, Functional-Programming, option type, pattern-matching, SQL, type-providers]
+tags: [F#, Functional-Programming, Option-Type, Pattern-Matching, SQL, Type-Provider]
 meta:
   _edit_last: '1'
   mytory_md_path: ''
@@ -28,6 +28,7 @@ author:
 permalink: "/2016/07/18/yet-another-type-provider-blog-and-other-cool-things/"
 ---
 I hope that you have F# setup (if not here’s my <a href="http://www.codingwithsam.com/f-ides-text-editors-and-how-to-get-started/">previous post</a>). Type providers are a great way of loading data into your application without requiring a lot of boilerplate code and creating a lot of types at the start of project. There are many different kinds so let's just jump right in and see what we can do. 
+
 Let’s get our type provider going, reading a csv file of bank transactions. We need some example data so let's use this (the number of rows is not really important). Create a file named simple.csv with the following:
 
 ```
@@ -125,4 +126,5 @@ The following line is taking all the rows and summing the amount to give the tot
 
 ## What type providers can’t do
 There are many other posts and videos on type providers but not a lot of details on their limitations. The first, and hopefully the most obvious case is that type providers can’t handle when the type of the data is changing at runtime. Since the types are checked at compile time, if they change at runtime then the application will crash with an exception. Not analysing enough of the data will cause this exception so make sure you have sufficient data, or find the schema of the data. The second is multiple sources with similar data, think multiple CSV files with slightly different columns. In some cases it’s possible to use multiple type providers over each different file and then join the results together. If that is not possible, then dropping down to standard way of handling the data would be the best (F# is still the best tool for doing this). For our CSV example, that would be using a <a href="http://fsharp.github.io/FSharp.Data/library/CsvFile.html">CsvParser</a>. The final case is with SQL data and managing migrations. Currently the recommended approach is to handle the migrations separately from the application (let me know if anyone has a better solution).
+
 That’s it for now folks. Have fun using type providers and don’t forget to leave a comment on your success stories or failures. 

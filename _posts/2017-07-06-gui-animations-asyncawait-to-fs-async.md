@@ -34,14 +34,14 @@ author:
   last_name: Williams
 permalink: "/2017/07/06/gui-animations-asyncawait-to-fs-async/"
 ---
-<h3>Prerequisites</h3>
-<ul>
-<li>An understanding of Xamarin</li>
-<li>An simple understanding of Threads</li>
-<li>An understanding of F#</li>
-</ul>
-<p>Recently I attended a Winter of Xamarin event hosted by Microsoft. It was a great event, but as always the code examples all in C#. I thought it would be a great a exercise to translate the C# app into F#. This post focuses on one particular section that I came across, some Xamarin Forms' animations, that I found less than trivial to translate. The various attempts that I tried will be outlined, with the final solution at the end.</p>
-<h3>The animation code</h3>
+## Prerequisites
+- An understanding of Xamarin
+- An simple understanding of Threads
+- An understanding of F#
+
+Recently I attended a Winter of Xamarin event hosted by Microsoft. It was a great event, but as always the code examples all in C#. I thought it would be a great a exercise to translate the C# app into F#. This post focuses on one particular section that I came across, some Xamarin Forms' animations, that I found less than trivial to translate. The various attempts that I tried will be outlined, with the final solution at the end.
+
+## The animation code
 <table class="pre">
 <tbody>
 <tr>
@@ -100,9 +100,10 @@ permalink: "/2017/07/06/gui-animations-asyncawait-to-fs-async/"
 </tr>
 </tbody>
 </table>
-<p>Here is the main gist of the code. The method is part of a ContentPage. I'm assuming that most readers will understanding this, so will only go over this briefly. <code>Task.WhenAll</code> executes the animations in parallel. The <code>await</code> after each <code>Task.WhenAll</code> means wait for it to complete, so the inside of the loop, contains 4 sequential animations. Finally the loop just runs the 4 animations, sequentially 8 times.</p>
-<h3>Async in F#</h3>
-<p>Understanding Async in F# can be a little tricky. This is not because is it complicated, rather it is more explicit. Tomas Petricek has a great <a href="http://tomasp.net/blog/csharp-fsharp-async-intro.aspx/">'series on Async'</a>, and another post on the <a href="http://tomasp.net/blog/csharp-async-gotchas.aspx/">'Async in C# and F#: gotchas in C#'</a>. Armed with this knowledge here is my first attempt at translating the inner loop.</p>
+Here is the main gist of the code. The method is part of a ContentPage. I'm assuming that most readers will understanding this, so will only go over this briefly. <code>Task.WhenAll</code> executes the animations in parallel. The <code>await</code> after each <code>Task.WhenAll</code> means wait for it to complete, so the inside of the loop, contains 4 sequential animations. Finally the loop just runs the 4 animations, sequentially 8 times.
+
+## Async in F#
+Understanding Async in F# can be a little tricky. This is not because is it complicated, rather it is more explicit. Tomas Petricek has a great <a href="http://tomasp.net/blog/csharp-fsharp-async-intro.aspx/">'series on Async'</a>, and another post on the <a href="http://tomasp.net/blog/csharp-async-gotchas.aspx/">'Async in C# and F#: gotchas in C#'</a>. Armed with this knowledge here is my first attempt at translating the inner loop.
 <table class="pre">
 <tbody>
 <tr>
@@ -153,9 +154,10 @@ permalink: "/2017/07/06/gui-animations-asyncawait-to-fs-async/"
 </tr>
 </tbody>
 </table>
-<p>Here's some F# code that compiles and was my first attempt. Preferring a functional style, I wanted to treat the animations as data, and then <code>iter</code> (map with no result) over them. The function inside the iter contains the relevant transformations to make the code compile with F#. Let's walk through it. First <code>animations</code> is an array of <code>Task</code> and F# needs <code>Async</code>, so lets <code>map</code> over them and convert them to <code>Async</code>s. Next we we want to run them in parallel, <code>Async.Parallel</code> for the job. This is the same as C#'s <code>Task.WhenAll</code>. On to the next line, F# checks return types, and each of the animations return a bool. <code>Async.Ignore</code> will fix up the return type since there is nothing to check. Finally, Async.StartImmediate starts on the main thread an returns immediately so it won't block the main thread, but also doesn't create a new thread. (Async.RunSynchronously can't be used here since the animations must be run on the main thread and will wait for. The result: a deadlock). I'll save you time of trying the <code>show</code> function out; it doesn't work. When you run it, nothing happens. No crash, no animation.</p>
-<h3>But it compiled</h3>
-<p>When dealing with side effects, all bets are off as to whether the code works; animations are side effects. A careful read on Thomas' blog can give us an understanding of what is happening here. On the C# side, static methods for Tasks start immediately. This means that treating animations as data in a list (array) won't work as they will be started immediately. Armed with this knowledge here is another attempt.</p>
+Here's some F# code that compiles and was my first attempt. Preferring a functional style, I wanted to treat the animations as data, and then <code>iter</code> (map with no result) over them. The function inside the iter contains the relevant transformations to make the code compile with F#. Let's walk through it. First <code>animations</code> is an array of <code>Task</code> and F# needs <code>Async</code>, so lets <code>map</code> over them and convert them to <code>Async</code>s. Next we we want to run them in parallel, <code>Async.Parallel</code> for the job. This is the same as C#'s <code>Task.WhenAll</code>. On to the next line, F# checks return types, and each of the animations return a bool. <code>Async.Ignore</code> will fix up the return type since there is nothing to check. Finally, Async.StartImmediate starts on the main thread an returns immediately so it won't block the main thread, but also doesn't create a new thread. (Async.RunSynchronously can't be used here since the animations must be run on the main thread and will wait for. The result: a deadlock). I'll save you time of trying the <code>show</code> function out; it doesn't work. When you run it, nothing happens. No crash, no animation.
+
+## But it compiled
+When dealing with side effects, all bets are off as to whether the code works; animations are side effects. A careful read on Thomas' blog can give us an understanding of what is happening here. On the C# side, static methods for Tasks start immediately. This means that treating animations as data in a list (array) won't work as they will be started immediately. Armed with this knowledge here is another attempt.
 <table class="pre">
 <tbody>
 <tr>
@@ -202,9 +204,10 @@ permalink: "/2017/07/06/gui-animations-asyncawait-to-fs-async/"
 </tr>
 </tbody>
 </table>
-<p>This looks a little better and this does in fact work. The animation runs. As before, for each of the arrays, they need to be converted for <code>Task</code>s, set to run in parallel and have their result ignored. This time, instead of putting all the arrays in a list, they are inside an async block, and the <code>do!</code> tells F# to wait for each one to finish before starting the next one. <code>Async.StartImmediate</code> starts this off nicely on the main thread. I'll come back to this later and refactor out some of the duplicated code, but now let's get this running 8 times.</p>
-<h3>Running 8 times</h3>
-<p>Surely it can't be hard to run an animation 8 times. Also were using F# so variables and loops are beneath us. Here is my (failed) first attempt at running the above code 8 times.</p>
+This looks a little better and this does in fact work. The animation runs. As before, for each of the arrays, they need to be converted for <code>Task</code>s, set to run in parallel and have their result ignored. This time, instead of putting all the arrays in a list, they are inside an async block, and the <code>do!</code> tells F# to wait for each one to finish before starting the next one. <code>Async.StartImmediate</code> starts this off nicely on the main thread. I'll come back to this later and refactor out some of the duplicated code, but now let's get this running 8 times.
+
+## Running 8 times
+Surely it can't be hard to run an animation 8 times. Also were using F# so variables and loops are beneath us. Here is my (failed) first attempt at running the above code 8 times.
 <table class="pre">
 <tbody>
 <tr>
@@ -251,9 +254,10 @@ permalink: "/2017/07/06/gui-animations-asyncawait-to-fs-async/"
 </tr>
 </tbody>
 </table>
-<p>The last line is all that's changed. An attempt was made to replicate the <code>Async</code> action 8 times and then iter over the resulting list wrapping the animation in <code>do!</code> and executing as <code>Async.StartImmediate</code>. I had assuming that <code>Async.StartImmediate</code> was the same as C# and that they could be chained together. As already stated, this doesn't work. In F#, any async work must be enclosed in an async block, and started only once. <code>Async.StartImmediate</code> is analogous with an a C# method of <code>public async void</code> meaning you can not continue after the task has been started.</p>
-<h3>A working version</h3>
-<p>I still didn't want to put a variable with a for loop in, so I found the best compromise I could handle. Here is the first working solution:</p>
+The last line is all that's changed. An attempt was made to replicate the <code>Async</code> action 8 times and then iter over the resulting list wrapping the animation in <code>do!</code> and executing as <code>Async.StartImmediate</code>. I had assuming that <code>Async.StartImmediate</code> was the same as C# and that they could be chained together. As already stated, this doesn't work. In F#, any async work must be enclosed in an async block, and started only once. <code>Async.StartImmediate</code> is analogous with an a C# method of <code>public async void</code> meaning you can not continue after the task has been started.
+
+## A working version
+I still didn't want to put a variable with a for loop in, so I found the best compromise I could handle. Here is the first working solution:
 <table class="pre">
 <tbody>
 <tr>
@@ -308,9 +312,10 @@ permalink: "/2017/07/06/gui-animations-asyncawait-to-fs-async/"
 </tr>
 </tbody>
 </table>
-<p>The single shake action is bound to <code>shake</code>, and then the method returns an async block. In the block, the <code>shake</code> binding can then be replicated 8 times, and thanks to F#'s awesome <code>for..in..do</code> syntax, we have a loop but without a counter variable. We're also still inside the async block so <code>do!</code> waits for the animation to completed on each run through the list of animations.</p>
-<h3>Refactoring</h3>
-<p>This working version has some repeated code that we could clean up a little bit. We can take that out and put that into a function:</p>
+The single shake action is bound to <code>shake</code>, and then the method returns an async block. In the block, the <code>shake</code> binding can then be replicated 8 times, and thanks to F#'s awesome <code>for..in..do</code> syntax, we have a loop but without a counter variable. We're also still inside the async block so <code>do!</code> waits for the animation to completed on each run through the list of animations.
+
+## Refactoring
+This working version has some repeated code that we could clean up a little bit. We can take that out and put that into a function:
 <table class="pre">
 <tbody>
 <tr>
@@ -325,7 +330,7 @@ permalink: "/2017/07/06/gui-animations-asyncawait-to-fs-async/"
 </tr>
 </tbody>
 </table>
-<p>If that looks confusing, check out my post on <a href="http://codingwithsam.com">'point free notation'</a> and also this post on <a href="http://codingwithsam.com">'function composition'</a>. With the helper function the rest of code now looks as follows:</p>
+If that looks confusing, check out my post on [point free notation]({{ "point-free-notation/" | relative_url }}) and also this post on [function composition]({{ "function-composition" | relative_url }}). With the helper function the rest of code now looks as follows:
 <table class="pre">
 <tbody>
 <tr>
@@ -380,8 +385,8 @@ permalink: "/2017/07/06/gui-animations-asyncawait-to-fs-async/"
 </tr>
 </tbody>
 </table>
-<p>This is the final version that I left in my code base. I will mention one last step that could be done.</p>
-<p>Running animations sequentially like this might be rather common in a mobile app. So the async loop could be refactored out. An easy way to do this would be as an extension method on Async. Here's an example:</p>
+This is the final version that I left in my code base. I will mention one last step that could be done.
+Running animations sequentially like this might be rather common in a mobile app. So the async loop could be refactored out. An easy way to do this would be as an extension method on Async. Here's an example:
 <table class="pre">
 <tbody>
 <tr>
@@ -410,7 +415,7 @@ permalink: "/2017/07/06/gui-animations-asyncawait-to-fs-async/"
 </tr>
 </tbody>
 </table>
-<p>Simple enough, it's just pulled out the loop logic, (similar to how map has factored our the logic of a loop). The caller would then be as follows:</p>
+Simple enough, it's just pulled out the loop logic, (similar to how map has factored our the logic of a loop). The caller would then be as follows:
 <table class="pre">
 <tbody>
 <tr>
@@ -457,82 +462,7 @@ permalink: "/2017/07/06/gui-animations-asyncawait-to-fs-async/"
 </tr>
 </tbody>
 </table>
-<p>Because we are using the shake directly, we no longer need to bind it to <code>shake</code>. The piping operator is once again our friend and the code is easy to follow.</p>
-<h3>Summary</h3>
-<p>F#'s Async has all the power you need. let your codebase run wild with animations. Just remember that static methods on a C# <code>Task</code> are started immediately so they will need to be coupled with appropriate <code>!</code> op (ie <code>do!</code>, <code>let!</code> or <code>use!</code>).</p>
-<div id="fs1" class="tip">
-<p>val async : AsyncBuilder</p>
-<p>Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.async</p>
-</div>
-<div id="fs2" class="tip">
-<p>Multiple items<br />
-val int : value:'T -&gt; int (requires member op_Explicit)</p>
-<p>Full name: Microsoft.FSharp.Core.Operators.int</p>
-<p>--------------------<br />
-type int = int32</p>
-<p>Full name: Microsoft.FSharp.Core.int</p>
-<p>--------------------<br />
-type int&lt;'Measure&gt; = int</p>
-<p>Full name: Microsoft.FSharp.Core.int&lt;_&gt;</p>
-</div>
-<div id="fs3" class="tip">
-<p>Multiple items<br />
-module List</p>
-<p>from Microsoft.FSharp.Collections</p>
-<p>--------------------<br />
-type List&lt;'T&gt; =<br />
-| ( [] )<br />
-| ( :: ) of Head: 'T * Tail: 'T list<br />
-interface IReadOnlyCollection&lt;'T&gt;<br />
-interface IEnumerable<br />
-interface IEnumerable&lt;'T&gt;<br />
-member GetSlice : startIndex:int option * endIndex:int option -&gt; 'T list<br />
-member Head : 'T<br />
-member IsEmpty : bool<br />
-member Item : index:int -&gt; 'T with get<br />
-member Length : int<br />
-member Tail : 'T list<br />
-static member Cons : head:'T * tail:'T list -&gt; 'T list<br />
-...</p>
-<p>Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</p>
-</div>
-<div id="fs4" class="tip">
-<p>val iter : action:('T -&gt; unit) -&gt; list:'T list -&gt; unit</p>
-<p>Full name: Microsoft.FSharp.Collections.List.iter</p>
-</div>
-<div id="fs5" class="tip">
-<p>module Array</p>
-<p>from Microsoft.FSharp.Collections</p>
-</div>
-<div id="fs6" class="tip">
-<p>val map : mapping:('T -&gt; 'U) -&gt; array:'T [] -&gt; 'U []</p>
-<p>Full name: Microsoft.FSharp.Collections.Array.map</p>
-</div>
-<div id="fs7" class="tip">
-<p>Multiple items<br />
-type Async =<br />
-static member AsBeginEnd : computation:('Arg -&gt; Async&lt;'T&gt;) -&gt; ('Arg * AsyncCallback * obj -&gt; IAsyncResult) * (IAsyncResult -&gt; 'T) * (IAsyncResult -&gt; unit)<br />
-static member AwaitEvent : event:IEvent&lt;'Del,'T&gt; * ?cancelAction:(unit -&gt; unit) -&gt; Async&lt;'T&gt; (requires delegate and 'Del :&gt; Delegate)<br />
-static member AwaitIAsyncResult : iar:IAsyncResult * ?millisecondsTimeout:int -&gt; Async&lt;bool&gt;<br />
-static member AwaitTask : task:Task -&gt; Async&lt;unit&gt;<br />
-static member AwaitTask : task:Task&lt;'T&gt; -&gt; Async&lt;'T&gt;<br />
-static member AwaitWaitHandle : waitHandle:WaitHandle * ?millisecondsTimeout:int -&gt; Async&lt;bool&gt;<br />
-static member CancelDefaultToken : unit -&gt; unit<br />
-static member Catch : computation:Async&lt;'T&gt; -&gt; Async&lt;Choice&lt;'T,exn&gt;&gt;<br />
-static member Choice : computations:seq&lt;Async&lt;'T option&gt;&gt; -&gt; Async&lt;'T option&gt;<br />
-static member FromBeginEnd : beginAction:(AsyncCallback * obj -&gt; IAsyncResult) * endAction:(IAsyncResult -&gt; 'T) * ?cancelAction:(unit -&gt; unit) -&gt; Async&lt;'T&gt;<br />
-...</p>
-<p>Full name: Microsoft.FSharp.Control.Async</p>
-<p>--------------------<br />
-type Async&lt;'T&gt; =</p>
-<p>Full name: Microsoft.FSharp.Control.Async&lt;_&gt;</p>
-</div>
-<div id="fs8" class="tip">static member Async.AwaitTask : task:System.Threading.Tasks.Task -&gt; Async&lt;unit&gt;<br />
-static member Async.AwaitTask : task:System.Threading.Tasks.Task&lt;'T&gt; -&gt; Async&lt;'T&gt;</div>
-<div id="fs9" class="tip">static member Async.Parallel : computations:seq&lt;Async&lt;'T&gt;&gt; -&gt; Async&lt;'T []&gt;</div>
-<div id="fs10" class="tip">static member Async.Ignore : computation:Async&lt;'T&gt; -&gt; Async&lt;unit&gt;</div>
-<div id="fs11" class="tip">static member Async.StartImmediate : computation:Async&lt;unit&gt; * ?cancellationToken:System.Threading.CancellationToken -&gt; unit</div>
-<div id="fs12" class="tip">
-<p>val replicate : count:int -&gt; initial:'T -&gt; 'T list</p>
-<p>Full name: Microsoft.FSharp.Collections.List.replicate</p>
-</div>
+Because we are using the shake directly, we no longer need to bind it to <code>shake</code>. The piping operator is once again our friend and the code is easy to follow.
+
+## Summary
+F#'s Async has all the power you need. let your codebase run wild with animations. Just remember that static methods on a C# <code>Task</code> are started immediately so they will need to be coupled with appropriate <code>!</code> op (ie <code>do!</code>, <code>let!</code> or <code>use!</code>).

@@ -34,26 +34,30 @@ author:
   last_name: Williams
 permalink: "/2017/05/22/xamarin-forms-mvvmcross-fsharp/"
 ---
-<p><strong>prerequisites</strong></p>
-<ul>
-<li>Understanding of C#, Xamarin, Mvvm/MvvmCross</li>
-</ul>
-<p>F# supports Object-Orientated programming. MvvmCross is a framework for building apps with an MVVM design pattern. This blog post walks through combing them using a PCL ie MvvmCross with F#. A new project will be created. A new F# core PCL will then be added. The C# core will then be translated to F#. A small problem awaits....</p>
-<p><strong>Getting setup</strong></p>
-<p>Follow the IDE template and get a MvvmCross project setup with a C# PCl. We will change the core once this has been added. If you haven't added a template you can add it to your IDE from <a title="https://github.com/jimbobbennett/MVVMCross.XSAddIn">Xamarin Studio</a> or <a title="https://marketplace.visualstudio.com/items?itemName=JimBobBennett.MvvmCrossforVisualStudio">Visual Studio</a>. Once the project is created and all the packages have been installed, run your app to double check everything installed correctly. I've named my app <code>MvvmCrossViewModelDemo</code></p>
-<p><strong>Adding F# core</strong></p>
-<p>Next, we will add an F# core to replace the C# Core. On the solution right click and add a Forms PCL, make sure to choose F# for the language drop down. For the name you can choose anything, this post will use 'central'. Once the F# PCL has been added, do the following:<br />
-- remove windows 8.1 support from the PCL, ie select '.NET Portable Subset (.NET Framework 4.5, Windows 8)'<br />
--- This is showing as profile7 on my machine<br />
-- add the required packages via Nuget (or Paket if you know how)<br />
--- MvvmCross<br />
--- MvvmCross.Binding<br />
--- MvvmCross.Core<br />
--- MvvmCross.Platform<br />
--- Xamarin.Forms</p>
-<p><strong>Porting MvxApplication</strong></p>
-<p>Rename the file <code>MyPage.fs</code> to <code>App.fs</code></p>
-<p>The <code>App.cs</code> is the first block of code to port. It appears as follows:</p>
+
+## prerequisites
+
+- Understanding of C#, Xamarin, Mvvm/MvvmCross
+F# supports Object-Orientated programming. MvvmCross is a framework for building apps with an MVVM design pattern. This blog post walks through combing them using a PCL ie MvvmCross with F#. A new project will be created. A new F# core PCL will then be added. The C# core will then be translated to F#. A small problem awaits....
+
+## Getting setup
+Follow the IDE template and get a MvvmCross project setup with a C# PCl. We will change the core once this has been added. If you haven't added a template you can add it to your IDE from <a title="https://github.com/jimbobbennett/MVVMCross.XSAddIn">Xamarin Studio</a> or <a title="https://marketplace.visualstudio.com/items?itemName=JimBobBennett.MvvmCrossforVisualStudio">Visual Studio</a>. Once the project is created and all the packages have been installed, run your app to double check everything installed correctly. I've named my app <code>MvvmCrossViewModelDemo</code>
+
+## Adding F# core
+Next, we will add an F# core to replace the C# Core. On the solution right click and add a Forms PCL, make sure to choose F# for the language drop down. For the name you can choose anything, this post will use 'central'. Once the F# PCL has been added, do the following:
+
+- remove windows 8.1 support from the PCL, ie select '.NET Portable Subset (.NET Framework 4.5, Windows 8)'
+-- This is showing as profile7 on my machine
+- add the required packages via Nuget (or Paket if you know how)
+-- MvvmCross
+-- MvvmCross.Binding
+-- MvvmCross.Core
+-- MvvmCross.Platform
+-- Xamarin.Forms
+
+## Porting MvxApplication
+Rename the file <code>MyPage.fs</code> to <code>App.fs</code>
+The <code>App.cs</code> is the first block of code to port. It appears as follows:
 <table class="pre">
 <tbody>
 <tr>
@@ -90,7 +94,7 @@ permalink: "/2017/05/22/xamarin-forms-mvvmcross-fsharp/"
 </tr>
 </tbody>
 </table>
-<p>This is a direct port so the F# looks as follows:</p>
+This is a direct port so the F# looks as follows:
 <table class="pre">
 <tbody>
 <tr>
@@ -123,7 +127,7 @@ permalink: "/2017/05/22/xamarin-forms-mvvmcross-fsharp/"
 </tr>
 </tbody>
 </table>
-<p>Update the <code>App.fs</code> file to be as follows:</p>
+Update the <code>App.fs</code> file to be as follows:
 <table class="pre">
 <tbody>
 <tr>
@@ -164,10 +168,12 @@ permalink: "/2017/05/22/xamarin-forms-mvvmcross-fsharp/"
 </tr>
 </tbody>
 </table>
-<p><strong> Adding views</strong></p>
-<p>Simply add the views to the F# PCL project as you would with a C# project. Be sure to select <code>Forms ContentPage Xaml</code><br />
-When added, copy the XAML from below (or the C# project) and paste into the XAML for the F# project. Don't forget to update the two-class references (<code>x:Class</code>) for each of the files at the top of the XAML. I've included just the FirstPage.xaml:</p>
-<p>FirstPage.xaml</p>
+
+##  Adding views
+Simply add the views to the F# PCL project as you would with a C# project. Be sure to select <code>Forms ContentPage Xaml</code>
+
+When added, copy the XAML from below (or the C# project) and paste into the XAML for the F# project. Don't forget to update the two-class references (<code>x:Class</code>) for each of the files at the top of the XAML. I've included just the FirstPage.xaml:
+FirstPage.xaml
 <table class="pre">
 <tbody>
 <tr>
@@ -218,9 +224,11 @@ When added, copy the XAML from below (or the C# project) and paste into the XAML
 </tr>
 </tbody>
 </table>
-<p><strong>Porting the view models</strong></p>
-<p>A full version of <code>App.fs</code> with the view models is at the bottom of this blog if you want to skip to the end.<br />
-Let's start with the <code>AboutViewModel</code>, paste the following code below in <code>App.fs</code> below <code>open MvvmCross.Platform.IoC</code>:</p>
+
+## Porting the view models
+A full version of <code>App.fs</code> with the view models is at the bottom of this blog if you want to skip to the end.
+
+Let's start with the <code>AboutViewModel</code>, paste the following code below in <code>App.fs</code> below <code>open MvvmCross.Platform.IoC</code>:
 <table class="pre">
 <tbody>
 <tr>
@@ -245,10 +253,11 @@ Let's start with the <code>AboutViewModel</code>, paste the following code below
 </tr>
 </tbody>
 </table>
-<p>We need the import <code>MvvmCross.Core.ViewModels</code> in order to subclass,<code>MvxViewModel</code> just as we do in C#. (Note the project won't compile until everything is complete)</p>
-<p><strong>Porting the FirstViewModel</strong></p>
-<p>The <code>FirstViewModel</code> requires a bit more work to translate, so is covered bit by bit. <code>FirstViewModel</code> should be placed below <code>AboutViewModel</code> in the <code>ViewModels</code> modules. F# is indentation sensitive so this means it should be indented two tabs.</p>
-<p>Create the class with subclass:</p>
+We need the import <code>MvvmCross.Core.ViewModels</code> in order to subclass,<code>MvxViewModel</code> just as we do in C#. (Note the project won't compile until everything is complete)
+
+## Porting the FirstViewModel
+The <code>FirstViewModel</code> requires a bit more work to translate, so is covered bit by bit. <code>FirstViewModel</code> should be placed below <code>AboutViewModel</code> in the <code>ViewModels</code> modules. F# is indentation sensitive so this means it should be indented two tabs.
+Create the class with subclass:
 <table class="pre">
 <tbody>
 <tr>
@@ -265,7 +274,7 @@ Let's start with the <code>AboutViewModel</code>, paste the following code below
 </tr>
 </tbody>
 </table>
-<p>Add the variable to hold the string with its associated property for <code>YourNickName</code> :</p>
+Add the variable to hold the string with its associated property for <code>YourNickName</code> :
 <table class="pre">
 <tbody>
 <tr>
@@ -294,8 +303,8 @@ Let's start with the <code>AboutViewModel</code>, paste the following code below
 </tr>
 </tbody>
 </table>
-<p>My first attempt at doing this, (and I'm sure most people learning F# would be the same), was to use <code>let mutable yourNickname = ""</code> to hold the mutable string. However it doesn't work, (the code compiles but value/property is never updated). This is because of the implementation of <code>SetProperty</code> in MvvmCross.</p>
-<p>The implementation of <code>SetProperty</code> is:</p>
+My first attempt at doing this, (and I'm sure most people learning F# would be the same), was to use <code>let mutable yourNickname = ""</code> to hold the mutable string. However it doesn't work, (the code compiles but value/property is never updated). This is because of the implementation of <code>SetProperty</code> in MvvmCross.
+The implementation of <code>SetProperty</code> is:
 <table class="pre">
 <tbody>
 <tr>
@@ -326,8 +335,8 @@ Let's start with the <code>AboutViewModel</code>, paste the following code below
 </tr>
 </tbody>
 </table>
-<p>Notice that <code>ref</code> that is passed in. In F# if you take a <code>ref</code> of a mutable (ie <code>ref yourNickname</code>) you don't get the same result as taking a ref in C#. In F# it creates a wrapper that holds a mutable value. This is not what we want as we won't be able to compare it with the raw string; it will always return false. For more details see this post <a title="https://davefancher.com/2014/03/24/passing-arguments-by-reference-in-f/">Pass by reference</a>. By using a ref value in the view model, this problem is avoided and all we need to remember is to dereference <code>yourNickname</code> when we want the string.</p>
-<p>As a result of using the ref we now have this <code>!</code> in the getter:</p>
+Notice that <code>ref</code> that is passed in. In F# if you take a <code>ref</code> of a mutable (ie <code>ref yourNickname</code>) you don't get the same result as taking a ref in C#. In F# it creates a wrapper that holds a mutable value. This is not what we want as we won't be able to compare it with the raw string; it will always return false. For more details see this post <a title="https://davefancher.com/2014/03/24/passing-arguments-by-reference-in-f/">Pass by reference</a>. By using a ref value in the view model, this problem is avoided and all we need to remember is to dereference <code>yourNickname</code> when we want the string.
+As a result of using the ref we now have this <code>!</code> in the getter:
 <table class="pre">
 <tbody>
 <tr>
@@ -342,8 +351,8 @@ Let's start with the <code>AboutViewModel</code>, paste the following code below
 </tr>
 </tbody>
 </table>
-<p>As stated earlier, we need to return a string and we're using a reference type which is a wrapper type. The exclamation mark is a shorthand to return the enclosed mutable field.</p>
-<p>Next, we can add the getter the for the string. Again we use <code>!</code> to get the string value out:</p>
+As stated earlier, we need to return a string and we're using a reference type which is a wrapper type. The exclamation mark is a shorthand to return the enclosed mutable field.
+Next, we can add the getter the for the string. Again we use <code>!</code> to get the string value out:
 <table class="pre">
 <tbody>
 <tr>
@@ -358,7 +367,7 @@ Let's start with the <code>AboutViewModel</code>, paste the following code below
 </tr>
 </tbody>
 </table>
-<p>Finally, we can add in the command to navigate to the <code>AboutViewModel</code>:</p>
+Finally, we can add in the command to navigate to the <code>AboutViewModel</code>:
 <table class="pre">
 <tbody>
 <tr>
@@ -381,8 +390,8 @@ Let's start with the <code>AboutViewModel</code>, paste the following code below
 </tr>
 </tbody>
 </table>
-<p>You'll notice that we had to create a private method to make the call to base method <code>ShowViewModel</code>. The reason for this is that <code>MvxCommand</code> command takes in a function, and calling <code>ShowViewModel</code> must be called from a subclass ie it's not public method. The compiler gives an error if a function is passed in that directly calls <code>ShowViewModel</code> as it cannot prove that the call is made from a subclass ie it's enforcing the method is not public. The private method to <code>FirstViewModel</code> proves that the call is made from a subclass, so everything now compiles.</p>
-<p>That's it for porting the C# to F#. Note that with F# we don't need lots of files. The view models are declared above the app class, and F# compiler enforces that, making the code easy to navigate. Here is how the entire <code>App.fs</code> should look:</p>
+You'll notice that we had to create a private method to make the call to base method <code>ShowViewModel</code>. The reason for this is that <code>MvxCommand</code> command takes in a function, and calling <code>ShowViewModel</code> must be called from a subclass ie it's not public method. The compiler gives an error if a function is passed in that directly calls <code>ShowViewModel</code> as it cannot prove that the call is made from a subclass ie it's enforcing the method is not public. The private method to <code>FirstViewModel</code> proves that the call is made from a subclass, so everything now compiles.
+That's it for porting the C# to F#. Note that with F# we don't need lots of files. The view models are declared above the app class, and F# compiler enforces that, making the code easy to navigate. Here is how the entire <code>App.fs</code> should look:
 <table class="pre">
 <tbody>
 <tr>
@@ -479,8 +488,9 @@ Let's start with the <code>AboutViewModel</code>, paste the following code below
 </tr>
 </tbody>
 </table>
-<p><strong>The last wiring effort</strong></p>
-<p>For both the iOS and droid project, remove the project reference to the C# core and change it to the F# core (named Central in the post). Alternatively you could delete the C# core if you want to be sure you are using F#. Compile these projects, and you will get a compile error in the <code>Setup.cs</code> files. Change <code>Core</code> to <code>Central</code> in <code>Setup.cs</code> and everything should compile, ie:</p>
+
+## The last wiring effort
+For both the iOS and droid project, remove the project reference to the C# core and change it to the F# core (named Central in the post). Alternatively you could delete the C# core if you want to be sure you are using F#. Compile these projects, and you will get a compile error in the <code>Setup.cs</code> files. Change <code>Core</code> to <code>Central</code> in <code>Setup.cs</code> and everything should compile, ie:
 <table class="pre">
 <tbody>
 <tr>
@@ -495,24 +505,11 @@ Let's start with the <code>AboutViewModel</code>, paste the following code below
 </tr>
 </tbody>
 </table>
-<p><strong>Wrapping up</strong></p>
-<p>This post has shown how to create an F# core with mvvmCross. Remember the following:<br />
-- use ref for your variables if you need to call <code>SetProperty</code>, or any other method that takes in a ref value<br />
-- use private methods if need to pass a function that invokes a protected method on a base class</p>
-<p>As always, leave a comment if you found this helpful or know a better way!</p>
-<div id="fs1" class="tip">Multiple items<br />
-val ref : value:'T -&gt; 'T ref</p>
-<p>Full name: Microsoft.FSharp.Core.Operators.ref</p>
-<p>--------------------<br />
-type 'T ref = Ref&lt;'T&gt;</p>
-<p>Full name: Microsoft.FSharp.Core.ref&lt;_&gt;</p>
-</div>
-<div id="fs2" class="tip">val set : elements:seq&lt;'T&gt; -&gt; Set&lt;'T&gt; (requires comparison)</p>
-<p>Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.set</p>
-</div>
-<div id="fs3" class="tip">val sprintf : format:Printf.StringFormat&lt;'T&gt; -&gt; 'T</p>
-<p>Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.sprintf</p>
-</div>
-<div id="fs4" class="tip">val ignore : value:'T -&gt; unit</p>
-<p>Full name: Microsoft.FSharp.Core.Operators.ignore</p>
-</div>
+
+## Wrapping up
+This post has shown how to create an F# core with mvvmCross. Remember the following:
+
+- use ref for your variables if you need to call <code>SetProperty</code>, or any other method that takes in a ref value
+
+- use private methods if need to pass a function that invokes a protected method on a base class
+As always, leave a comment if you found this helpful or know a better way!

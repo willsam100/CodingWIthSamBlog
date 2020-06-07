@@ -95,7 +95,7 @@ Here we have created a type of ```EmployeeListPage``` which is akin to a class 
 &nbsp;
 
 ## Adding Data To The List
-Did you check that it builds and runs? awesome, let's add some employee data. For this we need a place to store the data and it must have a property with the name DisplayName, an F# record will suffice. Add the following above <strong>EmployeeListPage:</strong>
+Did you check that it builds and runs? awesome, let's add some employee data. For this we need a place to store the data and it must have a property with the name DisplayName, an F# record will suffice. Add the following above **EmployeeListPage:**
 ```fsharp
 type Employee = {
   DisplayName: string

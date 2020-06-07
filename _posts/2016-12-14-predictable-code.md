@@ -31,14 +31,14 @@ author:
   last_name: Williams
 permalink: "/2016/12/14/predictable-code/"
 ---
-<p>Code, code, code it's everywhere! As developers we have to read, understand and maintain it. Code that is predictable is code that can be understood just by reading it. On the contrast unpredictable code is code that is either ambiguous or misleading; in any case it will need to be executed somehow to see what it does. This post will show you how to write predictable code.</p>
-<p><strong>prerequisites</strong></p>
-<ul>
-<li>Assumed knowledge of an OOP language like C# or similar</li>
-<li>A simple understanding of a functional programming language. (Code examples are in F#)</li>
-</ul>
-<p><strong>Problem: mutating state</strong></p>
-<p>An interface with some math operations for a list. I've modeled with an interface since the premise of OOP is about abstractions and encapsulation.</p>
+Code, code, code it's everywhere! As developers we have to read, understand and maintain it. Code that is predictable is code that can be understood just by reading it. On the contrast unpredictable code is code that is either ambiguous or misleading; in any case it will need to be executed somehow to see what it does. This post will show you how to write predictable code.
+
+## prerequisites
+- Assumed knowledge of an OOP language like C# or similar
+- A simple understanding of a functional programming language. (Code examples are in F#)
+
+## Problem: mutating state
+An interface with some math operations for a list. I've modeled with an interface since the premise of OOP is about abstractions and encapsulation.
 <table class="pre">
 <tr>
 <td class="lines">
@@ -59,7 +59,7 @@ permalink: "/2016/12/14/predictable-code/"
 </td>
 </tr>
 </table>
-<p>First cut of the tests (for using the Math implementation of IMath)</p>
+First cut of the tests (for using the Math implementation of IMath)
 <table class="pre">
 <tr>
 <td class="lines">
@@ -94,7 +94,7 @@ permalink: "/2016/12/14/predictable-code/"
 </td>
 </tr>
 </table>
-<p>After code refactor</p>
+After code refactor
 <table class="pre">
 <tr>
 <td class="lines">
@@ -133,26 +133,30 @@ permalink: "/2016/12/14/predictable-code/"
 </td>
 </tr>
 </table>
-<p>Clearly this is some unpredictable code; the refactor should have worked. At first glance it appears that the interface for IMath is the problem. It will return you a new list. Unfortunately, after the refactor, it is clear that it modifies the list. The problem is the List class. It is mutable in every way. The size can be changed, the elements can be changed. It's open for everyone.</p>
-<p><strong>Mutability leads to unpredictable code</strong></p>
-<ul>
-<li>Mutation/Mutability (definition): when a variable or object inside an instance can be changed/replaced</li>
-<li>Mutation makes it hard to model time</li>
-<li>Mutation makes it hard to keep constraints with polymorphism (see wikipedia link below)</li>
-<li>Liskov substitution principle is followed by using immutable classes and is even stated on wikipeida</li>
-</ul>
+Clearly this is some unpredictable code; the refactor should have worked. At first glance it appears that the interface for IMath is the problem. It will return you a new list. Unfortunately, after the refactor, it is clear that it modifies the list. The problem is the List class. It is mutable in every way. The size can be changed, the elements can be changed. It's open for everyone.
+
+## Mutability leads to unpredictable code
+
+- Mutation/Mutability (definition): when a variable or object inside an instance can be changed/replaced
+- Mutation makes it hard to model time
+- Mutation makes it hard to keep constraints with polymorphism (see wikipedia link below)
+- Liskov substitution principle is followed by using immutable classes and is even stated on wikipeida
+
 <blockquote>
-<p>Mutability is a key issue here. If Square and Rectangle had only getter methods (i.e. they were immutable objects), then no violation of LSP could occur.<br />
-<a href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov substitution principle</a></p>
+Mutability is a key issue here. If Square and Rectangle had only getter methods (i.e. they were immutable objects), then no violation of LSP could occur.
+
+<a href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov substitution principle</a>
 </blockquote>
-<p><strong>What to do then</strong></p>
-<ul>
-<li>Avoid mutable classes. Copy the data and change the values during the copy, returning a new instance.</li>
-<li>To make a class immutable in C#: GetHashCode and Equals must be overriden</li>
-<li>Use a Functional language (F#), you get this all for free while still being on .NET</li>
-</ul>
-<p><strong>How does F# do this</strong></p>
-<p>Functional programming is about using functions + data to model the domain/behaviour. Encapsulation and abstractions are not goal. Common patterns are still factored out but these a for a another post. Our problem above written in F# looks like this (with the implementation):</p>
+
+## What to do then
+
+- Avoid mutable classes. Copy the data and change the values during the copy, returning a new instance.
+- To make a class immutable in C#: GetHashCode and Equals must be overriden
+- Use a Functional language (F#), you get this all for free while still being on .NET
+
+
+## How does F# do this
+Functional programming is about using functions + data to model the domain/behaviour. Encapsulation and abstractions are not goal. Common patterns are still factored out but these a for a another post. Our problem above written in F# looks like this (with the implementation):
 <table class="pre">
 <tr>
 <td class="lines">
@@ -197,34 +201,22 @@ permalink: "/2016/12/14/predictable-code/"
 </td>
 </tr>
 </table>
-<p><strong>Why does this work</strong></p>
-<ul>
-<li>The list type in F# (which is different to C#'s list) is immutable so the result is copied and changed.</li>
-<li>It's harder to create mutable objects:</li>
-<li>F# creates constants by default (these are called bindings, and means the reference can't be changed. If the object is not immutable then elements inside the object can be change eg. an array)</li>
-<li>A variable in F# requires the <code>mutable</code> keyword (It's more work, and some IDEs highlight the keyword to be explicit)</li>
-</ul>
-<p><strong>What's the point</strong></p>
-<ul>
-<li>immutability makes the code predictable. It can understood without executing it.</li>
-<li>
-Mutability and unpredictable code requires you execute the code somehow to check it does what you think.<br />
-~~ Use F# if you don't like writing boilerplate code and/or want your code to just work ~~ Use F#
-</li>
-</ul>
-<p><strong>Immutability FTW</strong></p>
-<p>NB: I claimed that FP does not have abstractions as goal. FP makes great leaps to reduce boilerplate code and encourage code reuse, but takes a mathematical approach to do this. Higher order functions and Monads (eg. State Monad) are examples of these.</p>
-<div class="tip" id="fs1">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)</p>
-<p>Full name: Microsoft.FSharp.Core.Operators.int</p>
-<p>--------------------<br />type int = int32</p>
-<p>Full name: Microsoft.FSharp.Core.int</p>
-<p>--------------------<br />type int&lt;&#39;Measure&gt; = int</p>
-<p>Full name: Microsoft.FSharp.Core.int&lt;_&gt;</p></div>
-<div class="tip" id="fs2">type &#39;T list = List&lt;&#39;T&gt;</p>
-<p>Full name: Microsoft.FSharp.Collections.list&lt;_&gt;</p></div>
-<div class="tip" id="fs3">Multiple items<br />module List</p>
-<p>from Microsoft.FSharp.Collections</p>
-<p>--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;&#160;&#160;interface IReadOnlyCollection&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IEnumerable<br />&#160;&#160;&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;member Head : &#39;T<br />&#160;&#160;&#160;&#160;member IsEmpty : bool<br />&#160;&#160;&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;&#160;&#160;member Length : int<br />&#160;&#160;&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;...</p>
-<p>Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</p></div>
-<div class="tip" id="fs4">val map : mapping:(&#39;T -&gt; &#39;U) -&gt; list:&#39;T list -&gt; &#39;U list</p>
-<p>Full name: Microsoft.FSharp.Collections.List.map</p></div>
+
+## Why does this work
+
+- The list type in F# (which is different to C#'s list) is immutable so the result is copied and changed.
+- It's harder to create mutable objects:
+- F# creates constants by default (these are called bindings, and means the reference can't be changed. If the object is not immutable then elementobject can be change eg. an array)
+- A variable in F# requires the ```mutable``` keyword (It's more work, and some IDEs highlight the keyword to be explicit)
+
+
+## What's the point
+
+- immutability makes the code predictable. It can understood without executing it.
+Mutability and unpredictable code requires you execute the code somehow to check it does what you think.
+
+**Use F# if you don't like writing boilerplate code and/or want your code to just work** Use F#
+
+
+## Immutability FTW
+NB: I claimed that FP does not have abstractions as goal. FP makes great leaps to reduce boilerplate code and encourage code reuse, but takes a mathematical approach to do this. Higher order functions and Monads (eg. State Monad) are examples of these.

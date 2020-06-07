@@ -7,7 +7,7 @@ parent_id: '0'
 published: true
 status: publish
 categories: [Azure]
-tags: [azure, Javascript]
+tags: [Azure, Javascript]
 # meta:
 #   _edit_last: '1'
 #   mashsb_timestamp: '1588847288'
@@ -29,6 +29,7 @@ permalink: "/2018/01/17/google-home-c-azure-join-cutting-edge-tech/"
 ---
 <img src="{{ site.baseurl }}/assets/img/GoogleMini.jpg" alt="Google Home Mini" title="Google Home Mini" />
 This post is a holiday post and not what I normally post about. But I think it's well worth the read as the cool tech should make up for missing F#/mobile apps content.
+
 During the holidays, my wife got me a Google Home Mini Speaker! I also have a heat pump (A/C unit) that is connected to Wi-Fi, with an app. Unfortunately they both don't talk to each other out of the box, so I thought a fun exercise would be for me to wire them up to talk to each other.
 The first step is to see if I can programatically control the heat pump.
 
@@ -91,18 +92,25 @@ Step one is now complete.
 
 ## Step 2: Make a simple Google Home app
 Google has some great documentation on this with <a href="https://developers.google.com/actions/dialogflow/first-app">a tutorial</a>. The tutorial will have you create an app called Silly Name Maker.
+
 Most of the required setup uses the tool titled DialogFlow.
+
 The tutorial creates a Google Assistant app that changes your name. The code is in Javascript and hosted with Google's Firebase (Cloud Platform).
 I followed that tutorial and most things worked. There was one thing that I did have a problem with, which was that the firebase init method did not create the required files.
 
 To get around this you can add a folder titled <code>functions</code>, and then create the two files in the folder <code>index.js</code> and <code>package.json</code>.
+
 <img src="{{ site.baseurl }}/assets/img/Screen-Shot-2018-01-11-at-8.03.45-PM.png" alt="Folder Structure" title="Folder Structure" />
 
 ## Step 3: Connecting the dots
 It's now time to update the cloud function to talk to the heat pump.
+
 I left the intents the same as the Silly Name Maker app (I reused the code from the tutorial in Step 2), since that was not important at this stage.
+
 For proof-of-concept I just wanted to do the simplest thing possible, by testing the architecture. So when the Firebase API is called, I hard-coded it set the heat pump to cool. This test will check that each component can talk to each other: ie DialogFlow -&gt; Firebase -&gt; Heat Pump.
+
 <img src="{{ site.baseurl }}/assets/img/HardCodeAllThe.png" alt="Hard code all the things" title="Hard code all the things" width="200" height="200" align="middle" />
+
 The rest of the code was the same as the local test:
 <table class="pre">
 <tr>
@@ -247,7 +255,9 @@ I was able to see the upload package.json file (and import the library), but it 
 In the firebase example, an npm package was used with dialogue flow to parse the request and response. It was unclear how to use that with azure, and I didn't want to figure it out.
 
 All I needed was the structure of the response to continue. And the input data as well if the this step works.
+
 <img src="{{ site.baseurl }}/assets/img/22hbwz.jpg" alt="Rewrite" title="Rewrite all the things" width="200" height="200" align="middle" />
+
 At this stage, I only cared about sending the speech text in the response. I found <a href="" title="https://dialogflow.com/docs/fulfillment#section-format-of-request-to-the-service">the docs</a> on how to send the response to Google for the speech.
 <table class="pre">
 <tr>

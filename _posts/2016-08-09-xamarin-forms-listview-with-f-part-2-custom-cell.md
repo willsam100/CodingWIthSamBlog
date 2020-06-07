@@ -8,7 +8,7 @@ published: true
 password: ''
 status: publish
 categories: [UI]
-tags: [Android ,customCell ,F# ,iOS ,listView ,XamarinForms, Mobile]
+tags: [Android, F#, iOS, ListView, XamarinForms, Mobile]
 meta:
   _edit_last: '1'
   mytory_md_path: ''
@@ -33,7 +33,7 @@ As promised, this post is part 2 of the ListView series. If you missed [part 1](
 
 ## Getting started: add the xaml
 
-Let's get to it, create another forms project with F#, for this post I'll use the name <strong>CustomSimpleList</strong>. Add the xaml file (see my [part 1]({{ "/2016/07/26/xamarin-forms-listview-with-xaml-and-f" | relative_url }}) if you've forgotten this), I'll name this CustomListView.xaml and add the following:
+Let's get to it, create another forms project with F#, for this post I'll use the name **CustomSimpleList**. Add the xaml file (see my [part 1]({{ "/2016/07/26/xamarin-forms-listview-with-xaml-and-f" | relative_url }}) if you've forgotten this), I'll name this CustomListView.xaml and add the following:
 
 ```xml
 <contentpage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:class="CustomSimpleList.CustomCellPage">

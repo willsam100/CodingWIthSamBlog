@@ -8,7 +8,7 @@ published: true
 password: ''
 status: publish
 categories: [UI, Testing]
-tags: [BDD, F#, Mobile, testing, UITest]
+tags: [BDD, F#, Mobile, Testing, UITest]
 meta:
   _edit_last: '1'
   mashsb_twitter_handle: willsam100
@@ -27,16 +27,21 @@ author:
   last_name: Williams
 permalink: "/2019/02/15/bdd-and-gherkin-without-ide-integrations/"
 ---
-<p>SpecFlow uses an IDE integration (extension, addon, plugin or whatever it's called). Instead use TickSpec. NO IDE extension/addon required. Supports F# / C#. Full example listed below</p>
-<h3>Cucumber, Specflow and Gherkin</h3>
-<p>Cucumber is the most the most popular library for this, supporting Ruby, Java, JavaScript. For .NET though, Specflow has become the most popular.<br />
-Both libraries tend to agree on the same syntax plain text file syntax though; gherkin.</p>
-<h3>BDD with gherkin recap</h3>
-<p>A quick re-cap, BDD is the act of defining automated tests by the behaviour of the system (an alternative to TDD). Because BDD focuses on behaviour, tests are typically called<br />
-outside-in. Said another way, they sit higher up on the test pyramid and they test much of the application when compared to TDD tests. BDD style tests could be written in source code, however, because they involve writing out what the application should do, this tends to involve other people (those who don't write code). As a result, gherkin was introduced as a simple plain text language to describe the tests so those without little coding experience could read them.</p>
-<h3>Gherkin language</h3>
-<p>The language is very simple and has 3 main keywords, <code>given</code>, <code>when</code>, <code>then</code>. The full spec is here: <a href="https://docs.cucumber.io/gherkin/reference/">https://docs.cucumber.io/gherkin/reference/</a></p>
-<p>here is a simple example (taken from the docs):</p>
+SpecFlow uses an IDE integration (extension, addon, plugin or whatever it's called). Instead use TickSpec. NO IDE extension/addon required. Supports F# / C#. Full example listed below
+
+## Cucumber, Specflow and Gherkin
+Cucumber is the most the most popular library for this, supporting Ruby, Java, JavaScript. For .NET though, Specflow has become the most popular.
+
+Both libraries tend to agree on the same syntax plain text file syntax though; gherkin.
+
+### BDD with gherkin recap
+A quick re-cap, BDD is the act of defining automated tests by the behaviour of the system (an alternative to TDD). Because BDD focuses on behaviour, tests are typically called
+
+outside-in. Said another way, they sit higher up on the test pyramid and they test much of the application when compared to TDD tests. BDD style tests could be written in source code, however, because they involve writing out what the application should do, this tends to involve other people (those who don't write code). As a result, gherkin was introduced as a simple plain text language to describe the tests so those without little coding experience could read them.
+
+### Gherkin language
+The language is very simple and has 3 main keywords, <code>given</code>, <code>when</code>, <code>then</code>. The full spec is here: <a href="https://docs.cucumber.io/gherkin/reference/">https://docs.cucumber.io/gherkin/reference/</a>
+here is a simple example (taken from the docs):
 <table class="pre">
 <tbody>
 <tr>
@@ -61,22 +66,25 @@ outside-in. Said another way, they sit higher up on the test pyramid and they te
 </tr>
 </tbody>
 </table>
-<h3>SpecFlow makes this hard</h3>
-<p>Specflow makes all of this possible by having a plugin to the IDE, Visual Studio and community support for Visual Studio For Mac (thanks @jimbobbennett). This is required, as Specflow emits code when the user saves the gherkin file (called the feature file). Sometimes things change in the IDE, and these tools are broken, this is more of an issue on VS4Mac than windows. I also don't like code gen when it can be avoided - it feels like magic and code should be understood.</p>
-<h3>TickSpec as the alternative</h3>
-<p>There is a lesser known library that provides the same functionality called <a href="https://github.com/fsprojects/TickSpec">https://github.com/fsprojects/TickSpec</a>. It supports the gherkin language and does not require an IDE plugin. Without the plugin, there is no syntax highlighting, but these style of tests are not for developers.</p>
-<p>Best of all, with TickSpec, there is not code gen. No magic. Nothing to go stale.</p>
-<p>With a few code tweaks, this library can be used to build out feature files (plain text gherkin language tests) for a Xamarin app, running on either Mac or Windows.</p>
-<h3>Creating a Xamarin UI test with TickSpec</h3>
-<ul>
-<li>Given an existing app that needs testing</li>
-<li>Add a new UI test project</li>
-<li>Update Xamarin.UITest to the latest</li>
-<li>Add TickSpec NuGet package</li>
-</ul>
-<p>All code snippets will be in F# (because it's an awesome language), C# is supported too though. You can even write your app in C#, and make just this UITest project in F#.<br />
-It's available in the drop-down when you create the project.</p>
-<p>To bootstrap TickSpec, a bit of glue code is required for the tests to be discovered for each platform. Add the following to your <code>AppInitializer</code></p>
+
+### SpecFlow makes this hard
+Specflow makes all of this possible by having a plugin to the IDE, Visual Studio and community support for Visual Studio For Mac (thanks @jimbobbennett). This is required, as Specflow emits code when the user saves the gherkin file (called the feature file). Sometimes things change in the IDE, and these tools are broken, this is more of an issue on VS4Mac than windows. I also don't like code gen when it can be avoided - it feels like magic and code should be understood.
+
+## TickSpec as the alternative
+There is a lesser known library that provides the same functionality called <a href="https://github.com/fsprojects/TickSpec">https://github.com/fsprojects/TickSpec</a>. It supports the gherkin language and does not require an IDE plugin. Without the plugin, there is no syntax highlighting, but these style of tests are not for developers.
+Best of all, with TickSpec, there is not code gen. No magic. Nothing to go stale.
+With a few code tweaks, this library can be used to build out feature files (plain text gherkin language tests) for a Xamarin app, running on either Mac or Windows.
+
+### Creating a Xamarin UI test with TickSpec
+- Given an existing app that needs testing
+- Add a new UI test project
+- Update Xamarin.UITest to the latest
+- Add TickSpec NuGet package
+
+All code snippets will be in F# (because it's an awesome language), C# is supported too though. You can even write your app in C#, and make just this UITest project in F#.
+
+It's available in the drop-down when you create the project.
+To bootstrap TickSpec, a bit of glue code is required for the tests to be discovered for each platform. Add the following to your <code>AppInitializer</code>
 <table class="pre">
 <tbody>
 <tr>
@@ -97,7 +105,7 @@ It's available in the drop-down when you create the project.</p>
 </tr>
 </tbody>
 </table>
-<p>If you're using C#, then create a new file and translate the following code to C#. If you're us F#, then add the following to the bottom of your <code>AppInitializer.fs</code> file.</p>
+If you're using C#, then create a new file and translate the following code to C#. If you're us F#, then add the following to the bottom of your <code>AppInitializer.fs</code> file.
 <table class="pre">
 <tbody>
 <tr>
@@ -258,16 +266,17 @@ It's available in the drop-down when you create the project.</p>
 </tr>
 </tbody>
 </table>
-<p>The code snippet above primarily does two things.<br />
-- create NUnit tests from the plain text feature files<br />
-- create the test for each platform specified in the test</p>
-<p>No tests have been added yet, so there won't be anything to see. Let's add some.</p>
-<ul>
-<li>add a plain text file to the project with the suffix <code>.feature</code></li>
-<li>set the build action to EmbeddedResource</li>
-<li>for each test (<code>scenario</code>) add the following on the line above <code>@android_ios</code></li>
-</ul>
-<p>Here is an example of a feature file with one test that will run on both Android and iOS. If you want only one platform then use only that name ie @android or @ios</p>
+The code snippet above primarily does two things.
+- create NUnit tests from the plain text feature files
+- create the test for each platform specified in the test
+
+No tests have been added yet, so there won't be anything to see. Let's add some.
+
+- add a plain text file to the project with the suffix <code>.feature</code>
+- set the build action to EmbeddedResource
+- for each test (<code>scenario</code>) add the following on the line above <code>@android_ios</code>
+
+Here is an example of a feature file with one test that will run on both Android and iOS. If you want only one platform then use only that name ie @android or @ios
 <table class="pre">
 <tbody>
 <tr>
@@ -296,9 +305,10 @@ It's available in the drop-down when you create the project.</p>
 </tr>
 </tbody>
 </table>
-<p>If you compile your code, you should see the test(s) show up in the test windows.</p>
-<h3>Adding steps</h3>
-<p>Following the Page-Object-Model, we need a static class name to hold our steps. The following code implements the required steps for the example test above.</p>
+If you compile your code, you should see the test(s) show up in the test windows.
+
+### Adding steps
+Following the Page-Object-Model, we need a static class name to hold our steps. The following code implements the required steps for the example test above.
 <table class="pre">
 <tbody>
 <tr>
@@ -345,9 +355,11 @@ It's available in the drop-down when you create the project.</p>
 </tr>
 </tbody>
 </table>
-<p>Note the in F# we can use the double backticks to write the name of a function with spaces. This makes writing the test names really easy and avoids naming wars - PascalCase, CamelCase, SnakeCase - just use English now!</p>
-<p><code>[&lt;given&gt;]</code> is an attribute (<code>[Given]</code> in C#). The first test shows how attributes are used in a C# style fashion. The remaining tests use the inlined style, to make the steps extremely readable.</p>
-<p>Each step delegates the work to a page and passes in the <code>app</code>. Here is the <code>NotesScreen</code> as an example:</p>
+Note the in F# we can use the double backticks to write the name of a function with spaces. This makes writing the test names really easy and avoids naming wars - PascalCase, CamelCase, SnakeCase - just use English now!
+
+<code>[&lt;given&gt;]</code> is an attribute (<code>[Given]</code> in C#). The first test shows how attributes are used in a C# style fashion. The remaining tests use the inlined style, to make the steps extremely readable.
+
+Each step delegates the work to a page and passes in the <code>app</code>. Here is the <code>NotesScreen</code> as an example:
 <table class="pre">
 <tbody>
 <tr>
@@ -384,17 +396,24 @@ It's available in the drop-down when you create the project.</p>
 </tr>
 </tbody>
 </table>
-<p><code>NotesScreen</code> is just a static class (<code>module</code> in F#). We can then define each of the text using <code>let</code>. No need for extra keywords as <code>let</code> bindings are immutable by default.<br />
-A simple function <code>canSeeGetNotesButton</code> then does the work to read the app's UI and check that the item exists. If it is missing, an exception is thrown.</p>
-<h3>Build and run</h3>
-<p>With those items in place, you should now be able to build and run. For each tests, there should be an Android and iOS test.</p>
+<code>NotesScreen</code> is just a static class (<code>module</code> in F#). We can then define each of the text using <code>let</code>. No need for extra keywords as <code>let</code> bindings are immutable by default.
+
+A simple function <code>canSeeGetNotesButton</code> then does the work to read the app's UI and check that the item exists. If it is missing, an exception is thrown.
+
+### Build and run
+With those items in place, you should now be able to build and run. For each tests, there should be an Android and iOS test.
 <h1>The following gists show full examples of each file:</h1>
-<p><a href="https://gist.github.com/willsam100/53375a4b94b689f3feb8f989414a9ff8">AppInitializer.fs</a><br />
-<a href="https://gist.github.com/willsam100/91ffd1d74db9f72e6ee9772b098cc46d">Tests.fs</a><br />
-<a href="https://gist.github.com/willsam100/86987eb493da326cdb84a8549ad0b900">Login.feature</a></p>
-<h3>Help - when I build the tests don't show up</h3>
-<p><strong>Looking for the wrong file type</strong><br />
-This can be caused by a few things. At the start of this blog post, the code to setup things up was added. The end of that code had a the following lines:</p>
+<a href="https://gist.github.com/willsam100/53375a4b94b689f3feb8f989414a9ff8">AppInitializer.fs</a>
+
+<a href="https://gist.github.com/willsam100/91ffd1d74db9f72e6ee9772b098cc46d">Tests.fs</a>
+
+<a href="https://gist.github.com/willsam100/86987eb493da326cdb84a8549ad0b900">Login.feature</a>
+
+## Help - when I build the tests don't show up
+
+### Looking for the wrong file type
+
+This can be caused by a few things. At the start of this blog post, the code to setup things up was added. The end of that code had a the following lines:
 <table class="pre">
 <tbody>
 <tr>
@@ -411,111 +430,26 @@ This can be caused by a few things. At the start of this blog post, the code to 
 </tr>
 </tbody>
 </table>
-<p>Make sure that it still says <code>.feature</code> or it won't find the right file.</p>
-<p><strong>Wrong file type name</strong><br />
-The plain test file must end with <code>.feature</code> if it doesn't, then it won't be found</p>
-<p><strong>Build action must be EmbeddedResource</strong></p>
-<p>This must be set, as TickSpec scans the assembly looking for feature files (rather than using magic to generate backings files). If not set, then the feature fiel wont' be in the assembly, and TickSpec won't be able to find it.</p>
-<p><strong>Tag each test with @android_ios or @android or @ios</strong></p>
-<p>Each test is named with <code>Scenario</code>. Before that line, there must be a tag with what platform the test will run on. The code added at the top of this post describes how to generate two tests (one for each platform) from the single test. No tag, no tests</p>
-<p><strong>Tag each test with @ignore</strong></p>
-<p>If you have this tag before your test, TickSpec will ignore the test and not run it.</p>
-<h3>Have any questions?</h3>
-<p>Leave a comment or message me on twitter @willsam100 - I'm happy to help</p>
-<p>Happy [type safe] coding</p>
-<p>CodingWithSam</p>
-<div id="fs1" class="tip">module Seq</p>
-<p>from Microsoft.FSharp.Collections</p>
-</div>
-<div id="fs2" class="tip">val exists : predicate:('T -&gt; bool) -&gt; source:seq&lt;'T&gt; -&gt; bool</p>
-<p>Full name: Microsoft.FSharp.Collections.Seq.exists</p>
-</div>
-<div id="fs3" class="tip">val raise : exn:System.Exception -&gt; 'T</p>
-<p>Full name: Microsoft.FSharp.Core.Operators.raise</p>
-</div>
-<div id="fs4" class="tip">val contains : value:'T -&gt; source:seq&lt;'T&gt; -&gt; bool (requires equality)</p>
-<p>Full name: Microsoft.FSharp.Collections.Seq.contains</p>
-</div>
-<div id="fs5" class="tip">val failwith : message:string -&gt; 'T</p>
-<p>Full name: Microsoft.FSharp.Core.Operators.failwith</p>
-</div>
-<div id="fs6" class="tip">val eprintf : format:Printf.TextWriterFormat&lt;'T&gt; -&gt; 'T</p>
-<p>Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.eprintf</p>
-</div>
-<div id="fs7" class="tip">val sprintf : format:Printf.StringFormat&lt;'T&gt; -&gt; 'T</p>
-<p>Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.sprintf</p>
-</div>
-<div id="fs8" class="tip">Multiple items<br />
-val string : value:'T -&gt; string</p>
-<p>Full name: Microsoft.FSharp.Core.Operators.string</p>
-<p>--------------------<br />
-type string = System.String</p>
-<p>Full name: Microsoft.FSharp.Core.string</p>
-</div>
-<div id="fs9" class="tip">val fst : tuple:('T1 * 'T2) -&gt; 'T1</p>
-<p>Full name: Microsoft.FSharp.Core.Operators.fst</p>
-</div>
-<div id="fs10" class="tip">val snd : tuple:('T1 * 'T2) -&gt; 'T2</p>
-<p>Full name: Microsoft.FSharp.Core.Operators.snd</p>
-</div>
-<div id="fs11" class="tip">val fold : folder:('State -&gt; 'T -&gt; 'State) -&gt; state:'State -&gt; source:seq&lt;'T&gt; -&gt; 'State</p>
-<p>Full name: Microsoft.FSharp.Collections.Seq.fold</p>
-</div>
-<div id="fs12" class="tip">module Array</p>
-<p>from Microsoft.FSharp.Collections</p>
-</div>
-<div id="fs13" class="tip">val map : mapping:('T -&gt; 'U) -&gt; array:'T [] -&gt; 'U []</p>
-<p>Full name: Microsoft.FSharp.Collections.Array.map</p>
-</div>
-<div id="fs14" class="tip">val concat : arrays:seq&lt;'T []&gt; -&gt; 'T []</p>
-<p>Full name: Microsoft.FSharp.Collections.Array.concat</p>
-</div>
-<div id="fs15" class="tip">val filter : predicate:('T -&gt; bool) -&gt; array:'T [] -&gt; 'T []</p>
-<p>Full name: Microsoft.FSharp.Collections.Array.filter</p>
-</div>
-<div id="fs16" class="tip">union case Option.Some: Value: 'T -&gt; Option&lt;'T&gt;</div>
-<div id="fs17" class="tip">union case Option.None: Option&lt;'T&gt;</div>
-<div id="fs18" class="tip">Multiple items<br />
-module List</p>
-<p>from Microsoft.FSharp.Collections</p>
-<p>--------------------<br />
-type List&lt;'T&gt; =<br />
-| ( [] )<br />
-| ( :: ) of Head: 'T * Tail: 'T list<br />
-interface IReadOnlyCollection&lt;'T&gt;<br />
-interface IEnumerable<br />
-interface IEnumerable&lt;'T&gt;<br />
-member GetSlice : startIndex:int option * endIndex:int option -&gt; 'T list<br />
-member Head : 'T<br />
-member IsEmpty : bool<br />
-member Item : index:int -&gt; 'T with get<br />
-member Length : int<br />
-member Tail : 'T list<br />
-static member Cons : head:'T * tail:'T list -&gt; 'T list<br />
-...</p>
-<p>Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</p>
-</div>
-<div id="fs19" class="tip">val choose : chooser:('T -&gt; 'U option) -&gt; list:'T list -&gt; 'U list</p>
-<p>Full name: Microsoft.FSharp.Collections.List.choose</p>
-</div>
-<div id="fs20" class="tip">val foldBack : folder:('T -&gt; 'State -&gt; 'State) -&gt; source:seq&lt;'T&gt; -&gt; state:'State -&gt; 'State</p>
-<p>Full name: Microsoft.FSharp.Collections.Seq.foldBack</p>
-</div>
-<div id="fs21" class="tip">val map : mapping:('T -&gt; 'U) -&gt; list:'T list -&gt; 'U list</p>
-<p>Full name: Microsoft.FSharp.Collections.List.map</p>
-</div>
-<div id="fs22" class="tip">val map : mapping:('T -&gt; 'U) -&gt; source:seq&lt;'T&gt; -&gt; seq&lt;'U&gt;</p>
-<p>Full name: Microsoft.FSharp.Collections.Seq.map</p>
-</div>
-<div id="fs23" class="tip">val concat : sources:seq&lt;#seq&lt;'T&gt;&gt; -&gt; seq&lt;'T&gt;</p>
-<p>Full name: Microsoft.FSharp.Collections.Seq.concat</p>
-</div>
-<div id="fs24" class="tip">val filter : predicate:('T -&gt; bool) -&gt; source:seq&lt;'T&gt; -&gt; seq&lt;'T&gt;</p>
-<p>Full name: Microsoft.FSharp.Collections.Seq.filter</p>
-</div>
-<div id="fs25" class="tip">val collect : mapping:('T -&gt; #seq&lt;'U&gt;) -&gt; source:seq&lt;'T&gt; -&gt; seq&lt;'U&gt;</p>
-<p>Full name: Microsoft.FSharp.Collections.Seq.collect</p>
-</div>
-<div id="fs26" class="tip">val iter : action:('T -&gt; unit) -&gt; array:'T [] -&gt; unit</p>
-<p>Full name: Microsoft.FSharp.Collections.Array.iter</p>
-</div>
+Make sure that it still says <code>.feature</code> or it won't find the right file.
+
+
+### Wrong file type name
+
+The plain test file must end with <code>.feature</code> if it doesn't, then it won't be found
+
+
+### Build action must be EmbeddedResource
+This must be set, as TickSpec scans the assembly looking for feature files (rather than using magic to generate backings files). If not set, then the feature fiel wont' be in the assembly, and TickSpec won't be able to find it.
+
+
+### Tag each test with @android_ios or @android or @ios
+Each test is named with <code>Scenario</code>. Before that line, there must be a tag with what platform the test will run on. The code added at the top of this post describes how to generate two tests (one for each platform) from the single test. No tag, no tests
+
+
+### Tag each test with @ignore
+If you have this tag before your test, TickSpec will ignore the test and not run it.
+
+## Have any questions?
+Leave a comment or message me on twitter @willsam100 - I'm happy to help
+Happy [type safe] coding
+CodingWithSam

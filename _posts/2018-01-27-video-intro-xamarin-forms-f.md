@@ -27,6 +27,6 @@ author:
   last_name: Williams
 permalink: "/2018/01/27/video-intro-xamarin-forms-f/"
 ---
-<p>Here is a very quick introduction to get setup and going with Xamarin Forms and F#.</p>
-<p><iframe src="https://www.youtube.com/embed/YHYcwttcksA" width="560" height="315" frameborder="0" allowfullscreen="allowfullscreen"><span data-mce-type="bookmark" style="display: inline-block; width: 0px; overflow: hidden; line-height: 0;" class="mce_SELRES_start">﻿</span></iframe></p>
-<p>If you want more, like my video or leave a comment</p>
+Here is a very quick introduction to get setup and going with Xamarin Forms and F#.
+<iframe src="https://www.youtube.com/embed/YHYcwttcksA" width="560" height="315" frameborder="0" allowfullscreen="allowfullscreen"><span data-mce-type="bookmark" style="display: inline-block; width: 0px; overflow: hidden; line-height: 0;" class="mce_SELRES_start">﻿</span></iframe>
+If you want more, like my video or leave a comment
