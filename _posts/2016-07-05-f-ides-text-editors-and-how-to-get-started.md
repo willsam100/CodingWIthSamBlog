@@ -7,12 +7,12 @@ parent_id: '0'
 published: true
 password: ''
 status: publish
-categories: []
-tags:
-- F#
-- REPL
-- Scripting
-- Xamarin Studio
+# categories: []
+# tags:
+# - F#
+# - REPL
+# - Scripting
+# - Xamarin Studio
 meta:
   _edit_last: '1'
   mashsb_timestamp: '1590183609'

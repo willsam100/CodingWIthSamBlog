@@ -7,16 +7,16 @@ parent_id: '0'
 published: true
 password: ''
 status: publish
-categories:
-- GUI
-- Mobile
-tags:
-- Android
-- F#
-- Forms
-- iOS
-- listView
-- XamarinForms
+# categories:
+# - GUI
+# - Mobile
+# tags:
+# - Android
+# - F#
+# - Forms
+# - iOS
+# - listView
+# - XamarinForms
 meta:
   _edit_last: '1'
   _oembed_ab970a0b094524d8501be95a59b7918d: "{{unknown}}"

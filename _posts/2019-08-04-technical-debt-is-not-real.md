@@ -7,12 +7,8 @@ parent_id: '0'
 published: true
 password: ''
 status: publish
-categories:
-- software practice
-tags:
-- best practice
-- communication
-- software practice
+categories: [software practice]
+tags: [best practice, communication, software practice]
 meta:
   _wpcom_is_markdown: '1'
   _edit_last: '1'

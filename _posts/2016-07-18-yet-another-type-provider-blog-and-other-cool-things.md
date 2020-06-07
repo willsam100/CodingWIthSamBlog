@@ -7,17 +7,17 @@ parent_id: '0'
 published: true
 password: ''
 status: publish
-categories:
-- Functional Programming
-tags:
-- csv
-- F#
-- fold
-- functional programming
-- option type
-- pattern matching
-- SQL
-- type providers
+# categories:
+# - Functional-Programming
+# tags:
+# - csv
+# - F#
+# - fold
+# - functional programming
+# - option type
+# - pattern matching
+# - SQL
+# - type providers
 meta:
   _edit_last: '1'
   mytory_md_path: ''
