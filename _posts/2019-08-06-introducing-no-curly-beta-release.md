@@ -7,8 +7,8 @@ parent_id: '0'
 published: true
 password: ''
 status: publish
-categories: []
-tags: []
+categories: [Tools]
+tags: [C#, F#]
 meta:
   _wpcom_is_markdown: '1'
   _edit_last: '1'

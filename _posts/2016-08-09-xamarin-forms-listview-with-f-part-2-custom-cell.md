@@ -7,17 +7,8 @@ parent_id: '0'
 published: true
 password: ''
 status: publish
-# categories:
-# - Functional Programming
-# - GUI
-# - Mobile
-# tags:
-# - Android
-# - customCell
-# - F#
-# - iOS
-# - listView
-# - XamarinForms
+categories: [UI]
+tags: [Android ,customCell ,F# ,iOS ,listView ,XamarinForms, Mobile]
 meta:
   _edit_last: '1'
   mytory_md_path: ''

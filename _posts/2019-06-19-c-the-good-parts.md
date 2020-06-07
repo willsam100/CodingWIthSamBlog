@@ -7,16 +7,8 @@ parent_id: '0'
 published: true
 password: ''
 status: publish
-<!-- categories:
-- Code
-- State
-tags:
-- C#
-- composition
-- functional programming
-- option type
-- PureFunctions
-- subclassing -->
+categories: [State]
+tags: [C#, composition, Functional-Programming, option type, PureFunctions, subclassing]
 meta:
   _wpcom_is_markdown: '1'
   _edit_last: '1'
