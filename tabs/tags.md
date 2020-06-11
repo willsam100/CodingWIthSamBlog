@@ -6,6 +6,17 @@ title: Tags
 # https://github.com/cotes2020/jekyll-theme-chirpy
 # © 2017-2019 Cotes Chung
 # MIT License
+redirect_from:
+  - /tag/Xamarin
+  - /tag/android
+  - /tag/f
+  - /tag/frp
+  - /tag/script-files
+  - /tag/repl
+  - /tag/xamarinforms
+  - /tag/declarativeui
+  - /tag/fold
+
 ---
 
 {% comment %}

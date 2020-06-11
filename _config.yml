@@ -51,6 +51,12 @@ baseurl: ''
 # Change to your timezone › http://www.timezoneconverter.com/cgi-bin/findzone/findzone
 timezone: Pacific/Auckland
 
+plugins:
+  - jekyll-redirect-from
+
+whitelist:
+  - jekyll-redirect-from
+
 google_analytics:
   id: 'UA-80829986-1'          # Fill with your Google Analytics ID
   pv:

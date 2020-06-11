@@ -34,6 +34,8 @@ author:
   first_name: Sam
   last_name: Williams
 permalink: "/2016/12/03/net-none-none-none-or-exceptions/"
+redirect_from:
+  - net-none-none-none-or-exceptions/
 ---
 
 Creating a clear interface/API is key to writing <a href="https://www.amazon.com/gp/product/0132350882/ref=as_li_tl?ie=UTF8&amp;camp=1789&amp;creative=9325&amp;creativeASIN=0132350882&amp;linkCode=as2&amp;tag=codingwithsam-20&amp;linkId=4a9afb03ee2cebd83bec7e5f2b1abdc2" target="_blank" rel="noopener">Clean Code</a><img style="border: none !important; margin: 0px !important;" src="{{ site.baseurl }}/assets/img/ir?t=codingwithsam-20&amp;l=am2&amp;o=1&amp;a=0132350882" alt="" width="1" height="1" border="0" />. Object-Orientated code attempts this, but sometimes falls short. In this series, I'll aim to show a basic type that functional programming has that leads to interfaces/APIs that are easier to understand.
