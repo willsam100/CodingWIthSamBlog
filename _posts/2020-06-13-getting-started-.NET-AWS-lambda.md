@@ -2,6 +2,7 @@
 title: 'Example: AWS API-Gateway & Lambda & .NET Core'
 date: 2020-06-21 21:00:00 +12:00
 categories: [Cloud, AWS]
+published: false
 tags: [Aws, Lambda, .NET, Serverless]
 description: A simple example creating an HTTP ending using .NET Core, API Gateway and Lambda. 
 author: Sam Williams
