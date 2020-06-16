@@ -22,12 +22,12 @@ meta:
   _yoast_wpseo_metadesc: F# now has a Quick Fix menu to add open declarations
   _yoast_wpseo_linkdex: '56'
   mashsb_shares: '0'
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2019/01/10/vs4mac-get-excited-for-this-new-productivity-feature/"
 ---
 <!-- wp:html -->

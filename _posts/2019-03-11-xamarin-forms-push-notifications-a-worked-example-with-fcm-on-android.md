@@ -25,12 +25,12 @@ meta:
   _yoast_wpseo_content_score: '30'
   mashsb_jsonshares: '{"total":0,"error":"","facebook_shares":0}'
   mashsb_shares: '0'
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2019/03/11/xamarin-forms-push-notifications-a-worked-example-with-fcm-on-android/"
 ---
 Google's new firebase cloud messaging is a great way to send messages to your users or devices. Best of all, it is a great way to get a little bit of extra background processing time on Android 8+. Xamarin has bindings for Android and iOS to make all of this really simple.

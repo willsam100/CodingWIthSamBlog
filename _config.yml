@@ -7,6 +7,7 @@
 
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 #--------------------------
+future: false
 
 title: Coding With Sam                          # the main title
 

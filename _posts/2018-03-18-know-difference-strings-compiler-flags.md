@@ -25,12 +25,12 @@ meta:
   _yoast_wpseo_metadesc: Learn how to use the strings.xml file in Android correctly
     and how to handle strings in code that should not be used in production. Code
     with confidence using compiler symbols.
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2018/03/18/know-difference-strings-compiler-flags/"
 ---
 ## Reverse Engineering APKs

@@ -27,12 +27,12 @@ meta:
     and a not-so-fun-to-work-with codebase. By improving our communication and being
     clear with the trade-offs we're making we can avoid these problems and enjoy a
     happier life writing software.
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2019/08/04/technical-debt-is-not-real/"
 ---
 

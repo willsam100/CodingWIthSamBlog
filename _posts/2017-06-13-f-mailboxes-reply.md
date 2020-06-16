@@ -26,12 +26,12 @@ meta:
   _yoast_wpseo_primary_category: '39'
   dsq_thread_id: '6132743194'
   _wp_old_slug: pulling-state-from-f-mailboxes
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2017/06/13/f-mailboxes-reply/"
 ---
 

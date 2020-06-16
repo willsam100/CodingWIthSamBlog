@@ -18,12 +18,12 @@ meta:
   _yoast_wpseo_content_score: '30'
   mashsb_shares: '0'
   mashsb_jsonshares: '{"total":0,"error":"","facebook_shares":0}'
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2019/08/06/introducing-no-curly-beta-release/"
 ---
 No Curly - a chrome extension to convert C# to F#. Click the link at the top of this blog to try it out!

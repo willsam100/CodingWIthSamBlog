@@ -26,12 +26,12 @@ meta:
   _yoast_wpseo_content_score: '30'
   dsq_thread_id: '6141489708'
   _wp_old_slug: overriding-methodsfunctions-in-f
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2017/05/24/overriding-f-overloading-function-f/"
 ---
 Overloading methods are common practice in many OOP languages, but in functional languages (using a functional style) not only is this not common practice, sometimes it's not even possible. This short post highlights why and shows the alternatives.

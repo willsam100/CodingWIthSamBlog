@@ -18,12 +18,12 @@ meta:
   _yoast_wpseo_content_score: '30'
   mashsb_shares: '0'
   mashsb_jsonshares: '{"total":0,"error":"","facebook_shares":0}'
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2019/06/19/c-the-good-parts/"
 ---
 Every language has some good parts and some bad parts. Some more than others. Additionally, each language changes slightly over time as developers find better ways of solving problems. Identifying the good parts and the good trends is in a language is a great strategy for success.

@@ -22,12 +22,12 @@ meta:
   ampforwp_custom_content_editor: ''
   ampforwp_custom_content_editor_checkbox: ''
   ampforwp-amp-on-off: default
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2017/09/01/net-standard-for-mobile-is-here/"
 ---
 

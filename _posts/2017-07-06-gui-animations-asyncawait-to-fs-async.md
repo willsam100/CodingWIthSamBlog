@@ -26,12 +26,12 @@ meta:
   mashsb_twitter_handle: willsam100
   _yoast_wpseo_primary_category: '29'
   dsq_thread_id: '6133611476'
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2017/07/06/gui-animations-asyncawait-to-fs-async/"
 ---
 ## Prerequisites

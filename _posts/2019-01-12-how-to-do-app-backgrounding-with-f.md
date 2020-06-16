@@ -17,12 +17,12 @@ meta:
   _yoast_wpseo_content_score: '30'
   mashsb_jsonshares: '{"facebook_total":1,"facebook_likes":1,"facebook_comments":0}'
   mashsb_shares: '1'
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2019/01/12/how-to-do-app-backgrounding-with-f/"
 ---
 <!-- wp:html -->

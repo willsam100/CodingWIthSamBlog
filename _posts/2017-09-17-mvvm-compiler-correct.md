@@ -26,12 +26,12 @@ meta:
     in just 25 lines
   _yoast_wpseo_linkdex: '68'
   dsq_thread_id: '6149664161'
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2017/09/17/mvvm-compiler-correct/"
 ---
 MVVM is considered by many developers as the defacto design pattern to be used for creating GUI apps. Due to the nature of it being a design pattern, sometimes developers do not implement it correctly, or the architecture of the app simply deteriorates over time. Utilising the hierarchical nature of the pattern, a single pass compiler enforces the pattern, which is the type of compiler that F# adopted. If a developer wrote a GUI app with F#, than the MVVM implementation will be compiler checked. This post highlights why a code base might not be following MVVM correctly. Secondly, an MVVM compiler checked example is then shown. The last section covers a few practical steps that can be taken for individuals that have a C# code base.

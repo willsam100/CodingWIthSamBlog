@@ -28,12 +28,12 @@ meta:
   mashsb_jsonshares: '{"total":3,"error":"","facebook_shares":2,"twitter":1,"facebook_total":0,"facebook_likes":0,"facebook_comments":0}'
   mashsb_shorturl: http://www.codingwithsam.com/12-practical-ways-executing-f-scripts/
   dsq_thread_id: '6133572967'
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2017/09/10/12-practical-ways-executing-f-scripts/"
 ---
 There are many different ways to run an F# script (.fsx) file. All of them are covered here! For F#ers on Windows here is the official documentation <a href="https://docs.microsoft.com/en-us/dotnet/fsharp/tutorials/fsharp-interactive/," title="FSharp Interactive">MSDN: FSharp Interactive</a>.

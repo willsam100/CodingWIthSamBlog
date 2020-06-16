@@ -19,12 +19,12 @@ meta:
   mashsb_twitter_handle: willsam100
   _yoast_wpseo_primary_category: '33'
   _yoast_wpseo_content_score: '30'
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2017/08/15/android-and-f-are-at-last-friends/"
 ---
 A long time ago.., ok sometime at around the end of last year (2016), Android's terrible relationship with F# was about to improve significantly. Xamarin Forms was possible with an F# Core, but many, myself included, resorted to using a C# Droid project.

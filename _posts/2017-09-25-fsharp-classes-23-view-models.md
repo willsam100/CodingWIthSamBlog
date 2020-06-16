@@ -26,12 +26,12 @@ meta:
     models!
   _yoast_wpseo_linkdex: '68'
   dsq_thread_id: '6168821796'
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2017/09/25/fsharp-classes-23-view-models/"
 ---
 The View model is the centerpiece to MVVM, with no external dependencies. As a result, the view model is an excellent class that requires no libraries while also exercising many language features related to classes. These requirements make view models a great example for learning how to build classes in a new language.

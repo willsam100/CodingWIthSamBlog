@@ -19,12 +19,12 @@ meta:
   mashsb_shares: '1'
   _yoast_wpseo_metadesc: SpecFlow uses an IDE integration/extension. Instead use TickSpec.
     NO IDE addon required. Supports F# / C#. Full example listed below
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2019/02/15/bdd-and-gherkin-without-ide-integrations/"
 ---
 SpecFlow uses an IDE integration (extension, addon, plugin or whatever it's called). Instead use TickSpec. NO IDE extension/addon required. Supports F# / C#. Full example listed below

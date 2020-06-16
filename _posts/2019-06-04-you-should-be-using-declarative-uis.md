@@ -21,12 +21,12 @@ meta:
   _yoast_wpseo_metadesc: Apple has just announced SwiftUI a declarative UI framework.
     Declarative UIs are the future for GUI development and this release marks it's
     here for apps!
-author:
-  login: sam
-  email: willsam100@gmail.com
-  display_name: Sam Williams
-  first_name: Sam
-  last_name: Williams
+# author:
+#   login: sam
+#   email: willsam100@gmail.com
+#   display_name: Sam Williams
+#   first_name: Sam
+#   last_name: Williams
 permalink: "/2019/06/04/you-should-be-using-declarative-uis/"
 ---
 Apple has just announced SwiftUI - a library that allows for a declarative way to describe a UI. This is a game changer and the best time to programming if you code for iOS.
