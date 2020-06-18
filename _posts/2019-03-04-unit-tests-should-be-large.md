@@ -16,9 +16,7 @@ meta:
   _yoast_wpseo_primary_category: '28'
   _yoast_wpseo_content_score: '30'
   mashsb_jsonshares: '{"total":0,"error":"","facebook_shares":0}'
-  _yoast_wpseo_metadesc: Unit that don't catch regressions are useless. Unit tests
-    should cover pure functions. The pure function should be as large (code coverage)
-    as possible.
+
   mashsb_og_image: '547'
   mashsb_og_title: Unit tests should be large, not small
   mashsb_og_description: 'Unit that don''t catch regressions are useless. Unit tests
@@ -30,6 +28,9 @@ meta:
 #   display_name: Sam Williams
 #   first_name: Sam
 #   last_name: Williams
+description: Unit that don't catch regressions are useless. Unit tests
+  should cover pure functions. The pure function should be as large (code coverage)
+  as possible.
 permalink: "/2019/03/04/unit-tests-should-be-large/"
 ---
 If a unit test does not catch a regression, especially after refactoring, it is pointless. Small unit tests typically don't catch regressions. If the code base will not live for very long (eg proof-of-concept) then manually test.

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Technical debt is not real
+title: Is Technical debt is not real?
 date: 2019-08-04 09:58:27.000000000 +12:00
 type: post
 parent_id: '0'
@@ -19,20 +19,17 @@ meta:
   mashsb_shares: '0'
   mashsb_jsonshares: '{"total":0,"error":"","facebook_shares":0}'
   mashsb_og_title: Technical debt is not real
-  mashsb_og_description: Misunderstandings by developers lead to a loss of productivity
-    and a not-so-fun-to-work-with codebase. By improving our communication and being
-    clear with the trade-offs we're making we can avoid these problems and enjoy a
-    happier life writing software.
-  _yoast_wpseo_metadesc: Misunderstandings by developers lead to a loss of productivity
-    and a not-so-fun-to-work-with codebase. By improving our communication and being
-    clear with the trade-offs we're making we can avoid these problems and enjoy a
-    happier life writing software.
+
 # author:
 #   login: sam
 #   email: willsam100@gmail.com
 #   display_name: Sam Williams
 #   first_name: Sam
 #   last_name: Williams
+description: Misunderstandings by developers lead to a loss of productivity
+  and a not-so-fun-to-work-with codebase. By improving our communication and being
+  clear with the trade-offs we're making we can avoid these problems and enjoy a
+  happier life writing software.
 permalink: "/2019/08/04/technical-debt-is-not-real/"
 ---
 

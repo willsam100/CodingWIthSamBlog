@@ -21,9 +21,7 @@ meta:
   mashsb_shorturl: http://www.codingwithsam.com/fsharp-classes-23-view-models/
   _yoast_wpseo_focuskw: fsharp view models
   _yoast_wpseo_title: "%%title%% %%sep%% %%category%%"
-  _yoast_wpseo_metadesc: View models make for a great way to learn the class features
-    of F#. Here are 23 useless view models so you can build many more useful F# view
-    models!
+
   _yoast_wpseo_linkdex: '68'
   dsq_thread_id: '6168821796'
 # author:
@@ -32,6 +30,9 @@ meta:
 #   display_name: Sam Williams
 #   first_name: Sam
 #   last_name: Williams
+description: View models make for a great way to learn the class features
+of F#. Here are 23 useless view models so you can build many more useful F# view
+models!
 permalink: "/2017/09/25/fsharp-classes-23-view-models/"
 ---
 The View model is the centerpiece to MVVM, with no external dependencies. As a result, the view model is an excellent class that requires no libraries while also exercising many language features related to classes. These requirements make view models a great example for learning how to build classes in a new language.

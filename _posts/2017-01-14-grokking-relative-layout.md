@@ -22,8 +22,7 @@ meta:
   dsq_thread_id: '6141487413'
   mashsb_twitter_handle: willsam100
   _yoast_wpseo_primary_category: '29'
-  _yoast_wpseo_metadesc: A example of using Xamarin Forms relative layout. This post
-    highlights when to use relative layout instead of the preferred defaults StackLayout/GridLayout
+
   _yoast_wpseo_content_score: '30'
 author:
   login: sam
@@ -31,6 +30,8 @@ author:
   display_name: Sam Williams
   first_name: Sam
   last_name: Williams
+description: A example of using Xamarin Forms relative layout. This post
+  highlights when to use relative layout instead of the preferred defaults StackLayout/GridLayout
 permalink: "/2017/01/14/grokking-relative-layout/"
 ---
 For a Xamarin Forms app, there are several layout containers to choose from. Most UIs should be achievable with a StackLayout or a GridLayout. There are a few exceptions when those two won't solve the problem. This post is an example of Xamarin Forms relative layout.

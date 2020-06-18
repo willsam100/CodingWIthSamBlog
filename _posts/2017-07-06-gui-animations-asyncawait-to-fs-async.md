@@ -19,8 +19,7 @@ meta:
   _yoast_wpseo_focuskw: async animations
   _yoast_wpseo_title: Are async animations giving you trouble? It's easy with F# |
     %%category%%
-  _yoast_wpseo_metadesc: Async code is hard to write, and async/await in C# can be
-    hard to grok. Find out how to write async animations for Xamarin Forms using F#
+
   _yoast_wpseo_linkdex: '71'
   _yoast_wpseo_content_score: '30'
   mashsb_twitter_handle: willsam100
@@ -32,6 +31,7 @@ meta:
 #   display_name: Sam Williams
 #   first_name: Sam
 #   last_name: Williams
+description: Async code is hard to write, and async/await in C# can be hard to grok. Find out how to write async animations for Xamarin Forms using F#
 permalink: "/2017/07/06/gui-animations-asyncawait-to-fs-async/"
 ---
 ## Prerequisites

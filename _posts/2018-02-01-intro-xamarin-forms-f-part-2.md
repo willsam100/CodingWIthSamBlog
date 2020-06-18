@@ -14,8 +14,7 @@ meta:
   mashsb_timestamp: '1588775504'
   _yoast_wpseo_focuskw_text_input: Video Xamarin Forms F#
   _yoast_wpseo_focuskw: Video Xamarin Forms F#
-  _yoast_wpseo_metadesc: Learn how to handle errors in a function style in the context
-    of a mobile app with F#
+
   _yoast_wpseo_linkdex: '35'
   _yoast_wpseo_content_score: '30'
   mashsb_twitter_handle: willsam100
@@ -30,6 +29,8 @@ author:
   display_name: Sam Williams
   first_name: Sam
   last_name: Williams
+description: Learn how to handle errors in a function style in the context
+  of a mobile app with F#
 permalink: "/2018/02/01/intro-xamarin-forms-f-part-2/"
 ---
 This video is the second in the introduction series of Xamarin Forms with F#.

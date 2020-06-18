@@ -20,9 +20,7 @@ meta:
   ampforwp_custom_content_editor: ''
   ampforwp_custom_content_editor_checkbox: ''
   ampforwp-amp-on-off: default
-  _yoast_wpseo_metadesc: Overloading methods is common practice in OOP. OVerride functions,
-    as well as overloading functions in F# is a little different. Here is the needed
-    keyword
+
   _yoast_wpseo_content_score: '30'
   dsq_thread_id: '6141489708'
   _wp_old_slug: overriding-methodsfunctions-in-f
@@ -32,6 +30,9 @@ meta:
 #   display_name: Sam Williams
 #   first_name: Sam
 #   last_name: Williams
+description: Overloading methods is common practice in OOP. OVerride functions,
+  as well as overloading functions in F# is a little different. Here is the needed
+  keyword
 permalink: "/2017/05/24/overriding-f-overloading-function-f/"
 ---
 Overloading methods are common practice in many OOP languages, but in functional languages (using a functional style) not only is this not common practice, sometimes it's not even possible. This short post highlights why and shows the alternatives.

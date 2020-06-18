@@ -19,8 +19,7 @@ meta:
   _yoast_wpseo_focuskw_text_input: mvvmcross fsharp
   _yoast_wpseo_focuskw: mvvmcross fsharp
   _yoast_wpseo_title: "%%title%% %%sep%% %%category%%"
-  _yoast_wpseo_metadesc: MvvmCross is a great framework for MVVM. Learn how to use
-    MvvmCross with F#/FSharp and avoid a couple of nasty bugs! Tips and tricks included
+
   _yoast_wpseo_linkdex: '74'
   _yoast_wpseo_content_score: '60'
   mashsb_twitter_handle: willsam100
@@ -32,6 +31,8 @@ author:
   display_name: Sam Williams
   first_name: Sam
   last_name: Williams
+description: MvvmCross is a great framework for MVVM. Learn how to use
+MvvmCross with F#/FSharp and avoid a couple of nasty bugs! Tips and tricks included
 permalink: "/2017/05/22/xamarin-forms-mvvmcross-fsharp/"
 ---
 

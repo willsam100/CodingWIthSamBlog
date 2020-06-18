@@ -14,9 +14,7 @@ meta:
   mashsb_timestamp: '1591261501'
   _yoast_wpseo_focuskw_text_input: executing F# scripts
   _yoast_wpseo_focuskw: executing F# scripts
-  _yoast_wpseo_metadesc: With all platforms considered, this post shows the 12 ways
-    to execute an F# (fsx) script including from a text editor, IDEs or even a Terminal
-    window
+
   _yoast_wpseo_linkdex: '75'
   _yoast_wpseo_content_score: '60'
   mashsb_twitter_handle: willsam100
@@ -34,6 +32,9 @@ meta:
 #   display_name: Sam Williams
 #   first_name: Sam
 #   last_name: Williams
+description: With all platforms considered, this post shows the 12 ways
+  to execute an F# (fsx) script including from a text editor, IDEs or even a Terminal
+  window
 permalink: "/2017/09/10/12-practical-ways-executing-f-scripts/"
 ---
 There are many different ways to run an F# script (.fsx) file. All of them are covered here! For F#ers on Windows here is the official documentation <a href="https://docs.microsoft.com/en-us/dotnet/fsharp/tutorials/fsharp-interactive/," title="FSharp Interactive">MSDN: FSharp Interactive</a>.

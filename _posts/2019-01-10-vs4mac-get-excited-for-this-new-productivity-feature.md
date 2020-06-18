@@ -19,7 +19,7 @@ meta:
   _yoast_wpseo_content_score: '60'
   mashsb_jsonshares: '{"total":0,"error":"","facebook_shares":0}'
   _yoast_wpseo_focuskw: vs4mac-quick-fix
-  _yoast_wpseo_metadesc: F# now has a Quick Fix menu to add open declarations
+
   _yoast_wpseo_linkdex: '56'
   mashsb_shares: '0'
 # author:
@@ -28,6 +28,7 @@ meta:
 #   display_name: Sam Williams
 #   first_name: Sam
 #   last_name: Williams
+description: F# now has a Quick Fix menu to add open declarations
 permalink: "/2019/01/10/vs4mac-get-excited-for-this-new-productivity-feature/"
 ---
 <!-- wp:html -->

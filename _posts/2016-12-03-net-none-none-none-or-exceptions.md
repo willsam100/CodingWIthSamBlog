@@ -9,6 +9,9 @@ password: ''
 status: publish
 categories: [Functional-Programming]
 tags: [Exceptions, F#, Interfaces, Option-Type]
+description: When APIs are written poorly, the abstraction leaks.Runtime
+  exceptions can be the result. Overcome this by turning runtime exceptions into
+  the API contract!
 meta:
   _edit_last: '1'
   _wpcom_is_markdown: '1'
@@ -21,9 +24,7 @@ meta:
   mashsb_jsonshares: '{"total":0,"error":"","facebook_shares":0}'
   mashsb_shorturl: http://www.codingwithsam.com/net-none-none-none-or-exceptions/
   dsq_thread_id: '6135227955'
-  _yoast_wpseo_metadesc: When APIs are written poorly, the abstraction leaks.Runtime
-    exceptions can be the result. Overcome this by turning runtime exceptions into
-    the API contract!
+
   _yoast_wpseo_content_score: '30'
   mashsb_twitter_handle: willsam100
   _yoast_wpseo_primary_category: '28'

@@ -9,6 +9,9 @@ password: ''
 status: publish
 categories: [State]
 tags: [Database, Functional-Programming, MailboxProcessor, REPL, Scripting, State, Xamarin]
+description: Getting state into an F# Mailbox is easy. Getting it back
+    out is a little hard. Learn how to use F# mailbox reply to get state back and
+    stop using mutables.
 meta:
   _edit_last: '1'
   mashsb_timestamp: '1591290682'
@@ -17,9 +20,7 @@ meta:
   mashsb_shorturl: http://www.codingwithsam.com/pulling-state-from-f-mailboxes/
   _yoast_wpseo_focuskw_text_input: free state F# mailbox
   _yoast_wpseo_focuskw: F# mailbox reply
-  _yoast_wpseo_metadesc: Getting state into an F# Mailbox is easy. Getting it back
-    out is a little hard. Learn how to use F# mailbox reply to get state back and
-    stop using mutables.
+  
   _yoast_wpseo_linkdex: '77'
   _yoast_wpseo_content_score: '30'
   mashsb_twitter_handle: willsam100

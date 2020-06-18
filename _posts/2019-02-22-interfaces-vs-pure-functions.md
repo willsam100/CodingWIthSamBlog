@@ -17,14 +17,15 @@ meta:
   _yoast_wpseo_content_score: '60'
   mashsb_jsonshares: '{"facebook_total":1,"facebook_likes":1,"facebook_comments":0}'
   mashsb_shares: '1'
-  _yoast_wpseo_metadesc: Coding to an interface is not good advise. Instead, code
-    to a pure function. Your code will be self documenting and you;ll be more productive.
+
 # author:
 #   login: sam
 #   email: willsam100@gmail.com
 #   display_name: Sam Williams
 #   first_name: Sam
 #   last_name: Williams
+description: Coding to an interface is not good advise. Instead, code
+  to a pure function. Your code will be self documenting and you;ll be more productive.
 permalink: "/2019/02/22/interfaces-vs-pure-functions/"
 ---
 

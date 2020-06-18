@@ -22,15 +22,16 @@ meta:
   mashsb_jsonshares: '{"total":2,"error":"","facebook_shares":0,"twitter":2,"facebook_total":0,"facebook_likes":0,"facebook_comments":0}'
   mashsb_shorturl: http://www.codingwithsam.com/know-difference-strings-compiler-flags/
   dsq_thread_id: '6558057292'
-  _yoast_wpseo_metadesc: Learn how to use the strings.xml file in Android correctly
-    and how to handle strings in code that should not be used in production. Code
-    with confidence using compiler symbols.
+
 # author:
 #   login: sam
 #   email: willsam100@gmail.com
 #   display_name: Sam Williams
 #   first_name: Sam
 #   last_name: Williams
+description: Learn how to use the strings.xml file in Android correctly
+  and how to handle strings in code that should not be used in production. Code
+  with confidence using compiler symbols.
 permalink: "/2018/03/18/know-difference-strings-compiler-flags/"
 ---
 ## Reverse Engineering APKs
