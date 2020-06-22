@@ -31,14 +31,16 @@ author:
   display_name: Sam Williams
   first_name: Sam
   last_name: Williams
-description: MvvmCross is a great framework for MVVM. Learn how to use
-MvvmCross with F#/FSharp and avoid a couple of nasty bugs! Tips and tricks included
+description: MvvmCross is a great framework for MVVM. Learn how to use MvvmCross with F#/FSharp and avoid a couple of nasty bugs! Tips and tricks included
 permalink: "/2017/05/22/xamarin-forms-mvvmcross-fsharp/"
 ---
 
 ## prerequisites
 
-- Understanding of C#, Xamarin, Mvvm/MvvmCross
+- Understanding of C#
+- Xamarin
+- Mvvm/MvvmCross
+
 F# supports Object-Orientated programming. MvvmCross is a framework for building apps with an MVVM design pattern. This blog post walks through combing them using a PCL ie MvvmCross with F#. A new project will be created. A new F# core PCL will then be added. The C# core will then be translated to F#. A small problem awaits....
 
 ## Getting setup

@@ -30,11 +30,11 @@ meta:
 #   display_name: Sam Williams
 #   first_name: Sam
 #   last_name: Williams
-description: View models make for a great way to learn the class features
-of F#. Here are 23 useless view models so you can build many more useful F# view
-models!
+description: View models make for a great way to learn the class features of F#. Here are 23 useless view models so you can build many more useful F# view models!
 permalink: "/2017/09/25/fsharp-classes-23-view-models/"
 ---
+
+
 The View model is the centerpiece to MVVM, with no external dependencies. As a result, the view model is an excellent class that requires no libraries while also exercising many language features related to classes. These requirements make view models a great example for learning how to build classes in a new language.
 
 If learning F# (FSharp) is on your bucket list, getting started with classes is the easiest. Everything you need to know about F# classes is covered here. This post shows 23 (mostly) useless view models to get you started with F#. At the end, you will know how to make any useful view model in F#, so let's get started!

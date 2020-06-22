@@ -33,6 +33,7 @@ meta:
 description: MVVM can be hard to maintain. Using a compiler to enforce MVVM would be effective. See how MVVM can be compiler checked with an example in just 25 lines
 permalink: "/2017/09/17/mvvm-compiler-correct/"
 ---
+
 MVVM is considered by many developers as the defacto design pattern to be used for creating GUI apps. Due to the nature of it being a design pattern, sometimes developers do not implement it correctly, or the architecture of the app simply deteriorates over time. Utilising the hierarchical nature of the pattern, a single pass compiler enforces the pattern, which is the type of compiler that F# adopted. If a developer wrote a GUI app with F#, than the MVVM implementation will be compiler checked. This post highlights why a code base might not be following MVVM correctly. Secondly, an MVVM compiler checked example is then shown. The last section covers a few practical steps that can be taken for individuals that have a C# code base.
 
 ## What is MVVM?
