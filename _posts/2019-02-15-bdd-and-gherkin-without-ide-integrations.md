@@ -24,8 +24,7 @@ meta:
 #   display_name: Sam Williams
 #   first_name: Sam
 #   last_name: Williams
-description: SpecFlow uses an IDE integration/extension. Instead use TickSpec.
-NO IDE addon required. Supports F# / C#. Full example listed below
+description: SpecFlow uses an IDE integration/extension. Instead use TickSpec. NO IDE addon required. Supports F# / C#. Full example listed below
 permalink: "/2019/02/15/bdd-and-gherkin-without-ide-integrations/"
 ---
 SpecFlow uses an IDE integration (extension, addon, plugin or whatever it's called). Instead use TickSpec. NO IDE extension/addon required. Supports F# / C#. Full example listed below
