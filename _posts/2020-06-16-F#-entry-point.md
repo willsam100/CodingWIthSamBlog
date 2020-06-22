@@ -5,6 +5,7 @@ categories: [F#]
 tags: [F#, .NETCore, AWS, Lambda]
 description: F# static methods and .NET Core EntryPoint
 # image: /assets/img/2020-06-13-client.png
+published: false
 ---
 
 ## Motivation 

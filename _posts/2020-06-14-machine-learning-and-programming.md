@@ -6,6 +6,7 @@ tags: [MachineLearning]
 description: A breif disscusion on machine learning and the future of jobs as software developers
 # image: 
 # published: false
+published: false
 ---
 
 ## Motivation and Backgroud 
