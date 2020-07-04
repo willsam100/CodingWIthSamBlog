@@ -1,11 +1,10 @@
 ---
 title: 'F# EntryPoint, .NET Core and static exceptions'
-date: 2020-06-28 21:00:00 +12:00
+date: 2020-07-04 16:00:00 +12:00
 categories: [F#]
 tags: [F#, .NETCore, AWS, Lambda]
 description: F# static methods and .NET Core EntryPoint
-# image: /assets/img/2020-06-13-client.png
-published: false
+published: true
 ---
 
 ## Motivation 
