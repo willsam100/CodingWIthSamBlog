@@ -102,7 +102,7 @@ Run the following, and copy the value in quotes:
 cat serverless.template | grep Handler
 ```
 
-In the AWS lambda console, click `Edit` under `Basic Settings` and paste in the value for `Handler`. If you would also like to save a bit of money, go ahead and set the memory to 128MB. For this example, there is little need for anything more. Don't forget to click `Save`
+In the AWS lambda console, click `Edit` under `Runtime Settings` and paste in the value for `Handler`. If you would also like to save a bit of money, go ahead and set the memory to 128MB. For this example, there is little need for anything more. Don't forget to click `Save`
   
 ## Creating the API Gateway
   
