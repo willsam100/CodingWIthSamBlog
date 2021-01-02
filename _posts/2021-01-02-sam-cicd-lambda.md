@@ -4,7 +4,7 @@ date: 2021-01-03 21:00:00 +13:00
 categories: [Cloud, AWS Lambda]
 tags: [Aws Lambda, ci/cd, Serverless]
 description: Tips and tricks on deploying to AWS Lambda
-published: false
+published: true
 image: /assets/img/2021-01-02-pipeline.jpg
 ---
 
