@@ -64,7 +64,7 @@ To train, the MCTS algorithm is run and the games are written out to a CSV file.
 
 ## Performance
 
-For a single suit spider solitaire game, up to 4 'runs' (a run is a term I use for ordering the cards Ace through to King) can be completed. To finish an entire game, 8 runs must be completed. Running on my Macbook Pro 16" takes less than 5 mins to complete. Greater performance can be achieved with longer times, and injection of domain knowledge (I am aiming for a general solution). 
+For a single suit spider solitaire game, up to 6 'runs' (a run is a term I use for ordering the cards Ace through to King) can be completed. To finish an entire game, 8 runs must be completed. Running on my Macbook Pro 16" takes less than 15 mins to complete. Greater performance can be achieved with longer times, and injection of domain knowledge (I am aiming for a general solution). 
 
 # What I am working on now
 
