@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Is Technical debt is not real?
+title: Is Technical debt not real?
 date: 2019-08-04 09:58:27.000000000 +12:00
 type: post
 parent_id: '0'
