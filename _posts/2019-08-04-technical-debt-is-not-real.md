@@ -20,12 +20,6 @@ meta:
   mashsb_jsonshares: '{"total":0,"error":"","facebook_shares":0}'
   mashsb_og_title: Technical debt is not real
 
-# author:
-#   login: sam
-#   email: willsam100@gmail.com
-#   display_name: Sam Williams
-#   first_name: Sam
-#   last_name: Williams
 description: Misunderstandings by developers lead to a loss of productivity
   and a not-so-fun-to-work-with codebase. By improving our communication and being
   clear with the trade-offs we're making we can avoid these problems and enjoy a
