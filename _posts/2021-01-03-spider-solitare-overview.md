@@ -1,5 +1,5 @@
 ---
-title: Machine Learning endeavours
+title: Machine Learning Endeavours
 date: 2021-01-05 21:00:00 +13:00
 categories: [Machine Learning]
 tags: [Machine-Learning, ML, F#, Python. Mcts, Deep-Learning, Keras]
