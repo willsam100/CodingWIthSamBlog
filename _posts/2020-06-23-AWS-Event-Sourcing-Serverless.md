@@ -1,6 +1,6 @@
 ---
 title: Event sourcing with serverless AWS
-date: 2021-01-01 21:00:00 +12:00
+date: 2021-02-05 21:00:00 +12:00
 categories: [Cloud, AWS]
 tags: [F#, .NETCore, AWS, Lambda]
 description: Event-Sourcing on AWS using serverless technologies

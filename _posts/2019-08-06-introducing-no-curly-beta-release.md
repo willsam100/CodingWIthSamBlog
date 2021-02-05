@@ -28,6 +28,8 @@ permalink: "/2019/08/06/introducing-no-curly-beta-release/"
 ---
 No Curly - a chrome extension to convert C# to F#. Click the link at the top of this blog to try it out!
 
+[No Culy - Google Chrome Store](https://chrome.google.com/webstore/detail/no-curly/nkiofdmlpjbdcjphkffgbpblfmejbpgg)
+
 ## History - Why this tool matters
 For most of my career, I have been building mobile apps. That is how I got paid. During this time I have also been learning how to write functional code as in functional programming. Xamarin was the first cross-platform to combine them with F#. F# is currently not as popular as C#, and many of the code examples are written in C#. When using Xamarin, it's also not possible (or rather hard) to keep adding platform code ie an Android Intent. The C# code needed to be converted to F#, and I grew weary of making the same basic changes  - syntax recording of types and names.
 
