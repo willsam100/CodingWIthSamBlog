@@ -1,6 +1,6 @@
 ---
 title: Immutable C#
-date: 2021-10-25 21:00:00 +13:00
+date: 2021-10-25 21:00:00 +12:00
 categories: [C#]
 tags: [C#, Functional Programming]
 description: Modern C# versions make it very easy to write immutable C#
