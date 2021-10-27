@@ -81,6 +81,7 @@ A few parts to call out is the mutation that occurs when removing the GST. Addit
 
 
 We can change the `Transaction` DTO to be immutable. The record has a basic form of equality along with an updated syntax, and the `init` properties mean that once set at creation, the values cannot be changed.
+
     public record Transaction 
     {
         public DateTime PurchaseDate { get; init; }
