@@ -6,6 +6,8 @@ tags: [C#, Functional Programming]
 description: Modern C# versions make it very easy to write immutable C#
 published: true
 image: /assets/img/2021-10-25-immutable-csharp.jpg
+redirect_from:
+  - /posts/immutabel-csharp/
 ---
 
 # Immutable CSharp
